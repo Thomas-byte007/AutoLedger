@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">自动记账</string>
+    <string name="notification_listener_label">支付通知自动记账</string>
+
+    <string name="tab_detail">明细</string>
+    <string name="tab_report">报表</string>
+    <string name="tab_mine">我的</string>
+
+    <string name="expense">支出</string>
+    <string name="income">收入</string>
+    <string name="balance">结余</string>
+
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+
+    <string name="empty_title">本月还没有记录</string>
+    <string name="empty_desc">开启「支付通知自动记账」后，微信和支付宝的付款会自动出现在这里；也可以点击右下角手动记一笔。</string>
+
+    <string name="filter_all">全部</string>
+
+    <string name="untagged">待分类</string>
+    <string name="auto_tagged">已自动分类</string>
+
+    <string name="report_title">月度账单</string>
+    <string name="report_category_rank">分类占比</string>
+    <string name="report_trend">近 6 个月趋势</string>
+
+    <string name="settings_auto_capture">自动记账</string>
+    <string name="settings_notification_access">读取支付通知</string>
+    <string name="settings_sms_access">读取银行短信</string>
+    <string name="settings_rules">分类规则</string>
+    <string name="settings_import">导入微信/支付宝账单</string>
+    <string name="settings_export">导出账本数据</string>
+    <string name="settings_clear">清空全部数据</string>
+    <string name="settings_privacy">隐私说明</string>
+
+    <string name="action_granted">已开启</string>
+    <string name="action_grant">去开启</string>
+    <string name="action_close">关闭</string>
+</resources>

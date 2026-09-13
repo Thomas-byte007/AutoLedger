@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="chip_bg">#EDF1F8</color>
+    <color name="chip_text">#5A6478</color>
+    <color name="card_shadow">#0A1F3D</color>
+    <color name="on_primary_soft">#E8EFFF</color>
+    <color name="bar_track">#EDF1F8</color>
+    <color name="scrim">#66000000</color>
+</resources>

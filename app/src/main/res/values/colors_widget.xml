@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="banner_bg">#FFF7E6</color>
+    <color name="banner_pill">#FFE7B8</color>
+    <color name="badge_pending_bg">#FFF0E0</color>
+    <color name="badge_pending_text">#C4700A</color>
+    <color name="divider_translucent">#33FFFFFF</color>
+    <color name="legend_track">#EDF1F8</color>
+</resources>

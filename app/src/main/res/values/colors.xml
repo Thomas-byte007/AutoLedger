@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===== 品牌 / 中性色 ===== -->
+    <color name="brand_primary">#3B6CF6</color>
+    <color name="brand_primary_dark">#2A55D4</color>
+    <color name="brand_container">#E8EFFF</color>
+    <color name="brand_on_container">#17357F</color>
+
+    <color name="bg_page">#F4F6FB</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_variant">#EDF1F8</color>
+    <color name="divider">#E9EDF4</color>
+
+    <color name="text_primary">#131722</color>
+    <color name="text_secondary">#8A93A6</color>
+    <color name="text_tertiary">#AEB6C6</color>
+
+    <color name="expense_red">#F0544F</color>
+    <color name="income_green">#12B76A</color>
+
+    <!-- ===== 分类色 ===== -->
+    <color name="cat_dining">#FF7A45</color>
+    <color name="cat_transport">#3B82F6</color>
+    <color name="cat_shopping">#EC4899</color>
+    <color name="cat_grocery">#06B6D4</color>
+    <color name="cat_housing">#8B5CF6</color>
+    <color name="cat_entertainment">#F59E0B</color>
+    <color name="cat_medical">#EF4444</color>
+    <color name="cat_education">#6366F1</color>
+    <color name="cat_travel">#14B8A6</color>
+    <color name="cat_transfer">#94A3B8</color>
+    <color name="cat_other">#64748B</color>
+    <color name="cat_salary">#16A34A</color>
+    <color name="cat_refund">#22C55E</color>
+    <color name="cat_other_income">#0EA5E9</color>
+
+    <color name="wave_a">#3B6CF6</color>
+    <color name="wave_b">#F0544F</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

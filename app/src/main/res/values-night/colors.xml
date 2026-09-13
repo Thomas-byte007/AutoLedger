@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_primary">#6E93FF</color>
+    <color name="brand_primary_dark">#8FAEFF</color>
+    <color name="brand_container">#1E2A4A</color>
+    <color name="brand_on_container">#C9D8FF</color>
+
+    <color name="bg_page">#0E1014</color>
+    <color name="surface_card">#171A21</color>
+    <color name="surface_variant">#22262F</color>
+    <color name="divider">#282D38</color>
+
+    <color name="text_primary">#ECEFF5</color>
+    <color name="text_secondary">#94A0B8</color>
+    <color name="text_tertiary">#6B7688</color>
+
+    <color name="expense_red">#FF7B76</color>
+    <color name="income_green">#34D399</color>
+
+    <color name="chip_bg">#22262F</color>
+    <color name="chip_text">#C3CBD9</color>
+    <color name="card_shadow">#000000</color>
+    <color name="on_primary_soft">#1E2A4A</color>
+    <color name="bar_track">#22262F</color>
+    <color name="scrim">#99000000</color>
+</resources>

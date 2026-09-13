@@ -1,0 +1,19 @@
+# 仓库内文本统一按 LF 存储，避免跨平台换行差异
+* text=auto eol=lf
+
+# Windows 专用脚本保留 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制文件不做任何换行转换
+*.jar binary
+*.apk binary
+*.aab binary
+*.jks binary
+*.keystore binary
+*.p12 binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.ttf binary
+*.otf binary

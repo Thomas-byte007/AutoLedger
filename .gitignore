@@ -1,0 +1,26 @@
+# ---- 构建产物 ----
+*.iml
+.gradle
+.kotlin
+/build
+/captures
+.externalNativeBuild
+.cxx
+/app/build
+/app/release
+*.aab
+*.apk
+# 例外：保留 dist 下正式发布的 APK，便于直接在 Releases/Clone 后安装
+!dist/*.apk
+
+# ---- 本地环境 / IDE ----
+/local.properties
+local.properties
+/.idea
+.DS_Store
+
+# ---- 签名密钥与口令（切勿提交，泄露即等于应用被冒名签名）----
+keystore/
+*.jks
+*.keystore
+*.p12
