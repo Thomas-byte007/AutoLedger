@@ -146,6 +146,12 @@ app/src/main/java/com/local/autoledger/
     ├── RulesActivity.kt             分类规则管理
     ├── LogActivity.kt               采集日志查看
     └── widget/                      自绘环形图与柱状图（无第三方图表库）
+
+app/src/test/java/com/local/autoledger/   单元测试（不进 APK）
+paysim/                              支付通知模拟器（仅测试用，不进交付包）
+tools/                               测试驱动脚本
+├── emulator-e2e.ps1                 模拟器端到端自动化
+└── ledger_assert.py                 账本数据库断言（给上面那个脚本用）
 ```
 
 ### 技术选型
@@ -168,7 +174,10 @@ cd D:\Project\记账助手
 gradlew.bat assembleRelease
 ```
 
-产物：`app/build/outputs/apk/release/app-release.apk`（本项目已额外复制一份到 `dist/AutoLedger-v1.0.1-release.apk`）
+产物：`app/build/outputs/apk/release/app-release.apk`（本项目已额外复制一份到 `dist/AutoLedger-v1.0.2-release.apk`）
+
+> 注意：项目路径含中文（`记账助手`）时，构建目录会被自动重定位到同级目录
+> `D:\Project\AutoLedger-build`，原因见下方「两个容易踩的坑」第 3 条。
 
 ### 签名配置（密钥不入库）
 
@@ -191,7 +200,7 @@ LEDGER_KEY_PASSWORD=你的_key_口令
 | 项 | 值 |
 |---|---|
 | 包名 | `com.local.autoledger` |
-| 版本 | 1.0.1 (versionCode 2) |
+| 版本 | 1.0.2 (versionCode 3) |
 | minSdk / targetSdk | 26 / 35 |
 | 签名 | APK Signature Scheme v2，CN=AutoLedger |
 | 权限 | RECEIVE_SMS、READ_SMS、POST_NOTIFICATIONS、READ_EXTERNAL_STORAGE(≤32) |
@@ -213,10 +222,69 @@ LEDGER_KEY_PASSWORD=你的_key_口令
    gradle wrapper --gradle-version 8.10 --distribution-type bin --no-validate-url
    ```
    生成之后 `gradlew` 会直接使用缓存，不再联网。
+3. **中文路径会让单元测试全军覆没**：项目路径含中文时，`:app:testDebugUnitTest` 会全部报
+   `ClassNotFoundException`（类文件本身没问题，是 Gradle 的 test worker 在中文路径上加载不了）。
+   根 `build.gradle.kts` 已把 build 目录重定位到 ASCII 路径 `D:\Project\AutoLedger-build` 绕开它，
+   源码路径不用动，**这段逻辑不要删**。
 
 ---
 
-## 十、版本记录
+## 十、在电脑上测试（不用真机）
+
+改完代码不必每次都打包传到手机，两层测试都在电脑上闭环。
+
+### 1. 单元测试（秒级，主力回归）
+
+```powershell
+cd D:\Project\记账助手
+.\gradlew.bat :app:testDebugUnitTest
+```
+
+52 个用例，覆盖金额格式化、通知 / 短信解析、关键词分类、三档判重与墓碑（最后一个用 Robolectric
+起真实 SQLite）：
+
+| 文件 | 覆盖 |
+|---|---|
+| `MoneyTest` | 金额解析、千分位格式化 |
+| `PaymentParserTest` | 通知与短信解析、噪声过滤、商户抽取 |
+| `CategoryEngineTest` | 长词优先、兜底分类、收支分桶 |
+| `LedgerRepositoryTest` | 三档判重、墓碑重放拦截、手动记账、月度统计 |
+
+### 2. 模拟器端到端（跑真 APK）
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\emulator-e2e.ps1
+```
+
+脚本会自动：构建 APK → 启动模拟器 → 安装 App 与「支付模拟器」→ 打开通知使用权 →
+投递假的微信 / 支付宝支付通知 → 把账本数据库拉回电脑做断言 → 用界面操作删一条记录并重放通知 →
+截图存到 `dist/emulator-e2e/`。
+
+常用参数：`-SkipBuild`（跳过构建）、`-NoBoot`（复用已开机的模拟器）、`-KeepEmulator`（跑完不关模拟器）。
+
+> 为什么要多一个 `paysim` 模块？因为通知的来源包名由系统按**安装包**认定，应用改不了。
+> 想让 App 收到一条「来自 `com.tencent.mm`」的通知，就只能真的装一个叫这个名字的包上去。
+> 模拟器里没有真微信，这个包名是空的，于是 `paysim` 用两个 flavor 分别伪装成微信和支付宝，
+> 只用于测试，不进交付包。
+
+---
+
+## 十一、版本记录
+
+### v1.0.2（versionCode 3）
+
+搭起**电脑端自动化测试链路**（单元测试 + 模拟器端到端），并用它查出两处抓包瑕疵：
+
+1. **数据库里的通知原文重复存了两三遍。**
+   原因：`BigTextStyle` 通知会把同一段正文同时放进 `EXTRA_TEXT` 和 `EXTRA_BIG_TEXT`，
+   监听端把它们直接拼接，于是原文变成了「标题 + 正文 + 正文」。不影响金额识别，
+   但落库的原文不干净，日志里也不好读。修法：拼接前 `distinct()`。
+
+2. **采集日志里混进无意义的「未识别」记录。**
+   原因：系统偶尔会投递一条正文为空的通知更新。修法：正文为空直接返回，不记日志。
+
+另外调整了版本号与文档，功能行为对用户可见的变化只有上面两条。
+升级安装即可，签名指纹与前两版一致，原有账目不受影响。
 
 ### v1.0.1（versionCode 2）
 
