@@ -31,10 +31,15 @@ class SmsPaymentReceiver : BroadcastReceiver() {
                     if (!PaymentParser.looksLikeBankSender(sender)) return@forEach
                     val body = parts.joinToString("") { it.displayMessageBody.orEmpty() }
                     val time = parts.firstOrNull()?.timestampMillis ?: System.currentTimeMillis()
-                    val parsed = PaymentParser.parseSms(sender, body, time) ?: return@forEach
-                    CaptureSink.store(appContext, parsed, time, dedupWindowSec = 180)
+                    val parsed = PaymentParser.parseSms(sender, body, time)
+                    if (parsed == null) {
+                        CaptureLog.add("未识别", "短信｜${CaptureLog.brief("$sender $body")}")
+                        return@forEach
+                    }
+                    CaptureSink.store(appContext, parsed, time, dedupWindowSec = 300)
                 }
             } catch (t: Throwable) {
+                CaptureLog.add("异常", "短信｜${CaptureLog.brief(t.message ?: t.toString())}")
                 Log.w(TAG, "短信解析失败", t)
             } finally {
                 pending.finish()

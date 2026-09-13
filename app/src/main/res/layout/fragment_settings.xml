@@ -198,6 +198,16 @@
                 android:paddingBottom="4dp">
 
                 <include
+                    android:id="@+id/rowLog"
+                    layout="@layout/row_action" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="58dp"
+                    android:background="@color/divider" />
+
+                <include
                     android:id="@+id/rowNotifyAccess"
                     layout="@layout/row_action" />
 

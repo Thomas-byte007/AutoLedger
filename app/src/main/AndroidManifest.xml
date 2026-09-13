@@ -39,6 +39,10 @@
             android:name=".ui.RulesActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.LogActivity"
+            android:exported="false" />
+
         <!-- 自动记账核心：监听微信 / 支付宝的支付通知 -->
         <service
             android:name=".capture.PaymentNotificationListener"

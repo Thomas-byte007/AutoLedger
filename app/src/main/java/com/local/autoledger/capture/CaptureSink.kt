@@ -12,8 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.local.autoledger.R
-import com.local.autoledger.data.Channel
-import com.local.autoledger.data.Direction
+import com.local.autoledger.data.Categories
 import com.local.autoledger.data.LedgerBus
 import com.local.autoledger.data.LedgerRepository
 import com.local.autoledger.data.Money
@@ -37,7 +36,7 @@ object CaptureSink {
         context: Context,
         parsed: PaymentParser.Parsed,
         occurredAt: Long,
-        dedupWindowSec: Long = 120,
+        dedupWindowSec: Long = 240,
         quiet: Boolean = false
     ): Long {
         val match = LedgerRepository.classify(parsed.direction, parsed.merchant, parsed.rawText)
@@ -52,36 +51,20 @@ object CaptureSink {
             autoCategory = match.auto,
             rawText = parsed.rawText
         )
-        val id = LedgerRepository.insert(txn, dedupWindowSec)
-        if (id > 0) {
+        val result = LedgerRepository.insertDetailed(txn, dedupWindowSec)
+        if (result.id > 0) {
             LedgerBus.notifyChanged()
+            val label = Categories.byKey(txn.categoryKey, txn.direction).label
+            val merchant = if (txn.merchant.isNotBlank()) " · ${txn.merchant}" else ""
+            CaptureLog.add(
+                "记账",
+                "${parsed.channel.label} ${Money.signed(txn.amountCents, txn.direction)} · $label$merchant"
+            )
             if (!quiet) notifyCaptured(context, txn)
+        } else {
+            CaptureLog.add("跳过", "${result.reason}｜${CaptureLog.brief(parsed.rawText)}")
         }
-        return id
-    }
-
-    /** 忽略方向之外的重复：同一笔钱在通知与短信里各出现一次时只记一条 */
-    fun storeRaw(
-        context: Context,
-        amountCents: Long,
-        direction: Direction,
-        merchant: String,
-        payMethod: String,
-        channel: Channel,
-        occurredAt: Long,
-        rawText: String,
-        dedupWindowSec: Long = 180,
-        quiet: Boolean = false
-    ): Long {
-        val parsed = PaymentParser.Parsed(
-            amountCents = amountCents,
-            direction = direction,
-            merchant = merchant,
-            payMethod = payMethod,
-            channel = channel,
-            rawText = rawText
-        )
-        return store(context, parsed, occurredAt, dedupWindowSec, quiet)
+        return result.id
     }
 
     private fun ensureChannel(context: Context) {
@@ -108,7 +91,7 @@ object CaptureSink {
         ) return
         ensureChannel(context)
 
-        val cat = com.local.autoledger.data.Categories.byKey(txn.categoryKey)
+        val cat = Categories.byKey(txn.categoryKey)
         val title = "已自动记账 · ${cat.label}"
         val text = buildString {
             append(Money.signed(txn.amountCents, txn.direction))

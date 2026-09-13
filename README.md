@@ -44,6 +44,23 @@
 | 手动记账 | 现金、代付、漏记的，右下角「+」手动补 | 无 |
 
 > 同一笔钱如果同时产生了「支付通知」和「银行短信」，App 会自动去重，只记一条。
+>
+> 判重是分档做的，不会把「连着付了好几笔同样金额」误当成一笔：
+> 同一条通知在 20 秒内被系统反复投递才算重复，不同来源（通知 / 短信 / 账单）之间给了 4 分钟窗口。
+
+### 某笔付款没记上？先看采集日志
+
+「我的 → 采集日志」会记下每一条付款通知收到了什么原文、结果如何：
+
+| 日志标记 | 含义 |
+|---|---|
+| `记账` | 已经记进账本 |
+| `未识别` | 收到了通知，但没解析出金额 / 收支方向，跟着的原文就是判断依据 |
+| `跳过` | 解析出来了，但被判重丢掉，原因写在日志里 |
+| `状态` | 通知使用权连接 / 断开（断开时不会自动记账） |
+| `删除` / `导入` | 手动删除、账单导入的执行结果 |
+
+排查顺序一般是：先看有没有 `未识别`（说明通知文案没覆盖到）→ 再看有没有 `状态 断开` → 都没有却还是漏记，就是系统把 App 的通知监听杀掉了，重新进一次「通知使用权设置」即可。
 
 ---
 
@@ -87,6 +104,7 @@
 
 - **导出账本数据**：生成 UTF-8 BOM 的 CSV，Excel 直接打开不乱码，可自行备份。
 - **清空全部数据**：删掉本机所有账目，不可恢复。
+- 在明细里点开一条记录 →「删除这条记录」可以删掉它。删除会留一份「墓碑」，即使通知栏里那条付款通知被系统重新投递一遍，也不会把删掉的记录又写回来。
 
 ---
 
@@ -117,6 +135,7 @@ app/src/main/java/com/local/autoledger/
 │   ├── PaymentNotificationListener.kt  微信 / 支付宝通知监听
 │   ├── SmsPaymentReceiver.kt        银行卡短信
 │   ├── BillImporter.kt              微信 / 支付宝账单 CSV 导入
+│   ├── CaptureLog.kt                采集日志（排查「为什么这笔记不上」）
 │   └── CaptureSink.kt               落库 + 去重 + 轻提示
 └── ui/                              界面
     ├── MainActivity.kt              底部三 Tab
@@ -125,6 +144,7 @@ app/src/main/java/com/local/autoledger/
     ├── SettingsFragment.kt          我的 / 授权 / 导入导出
     ├── EditTransactionActivity.kt   手动记账 / 编辑 / 手动分类
     ├── RulesActivity.kt             分类规则管理
+    ├── LogActivity.kt               采集日志查看
     └── widget/                      自绘环形图与柱状图（无第三方图表库）
 ```
 
@@ -148,7 +168,7 @@ cd D:\Project\记账助手
 gradlew.bat assembleRelease
 ```
 
-产物：`app/build/outputs/apk/release/app-release.apk`（本项目已额外复制一份到 `dist/AutoLedger-v1.0.0-release.apk`）
+产物：`app/build/outputs/apk/release/app-release.apk`（本项目已额外复制一份到 `dist/AutoLedger-v1.0.1-release.apk`）
 
 ### 签名配置（密钥不入库）
 
@@ -171,7 +191,7 @@ LEDGER_KEY_PASSWORD=你的_key_口令
 | 项 | 值 |
 |---|---|
 | 包名 | `com.local.autoledger` |
-| 版本 | 1.0.0 (versionCode 1) |
+| 版本 | 1.0.1 (versionCode 2) |
 | minSdk / targetSdk | 26 / 35 |
 | 签名 | APK Signature Scheme v2，CN=AutoLedger |
 | 权限 | RECEIVE_SMS、READ_SMS、POST_NOTIFICATIONS、READ_EXTERNAL_STORAGE(≤32) |
@@ -193,3 +213,32 @@ LEDGER_KEY_PASSWORD=你的_key_口令
    gradle wrapper --gradle-version 8.10 --distribution-type bin --no-validate-url
    ```
    生成之后 `gradlew` 会直接使用缓存，不再联网。
+
+---
+
+## 十、版本记录
+
+### v1.0.1（versionCode 2）
+
+真机测试反馈的两个问题，都在这一版修掉：
+
+1. **明细里删掉的记录会自己回来。**
+   原因：付款通知还留在通知栏时，系统会把它重新投递一遍，而插入时的判重只查现有的账目 ——
+   刚删掉的那条查不到，就被原样写回去了。
+   修法：`ledger.db` 升到 v2，新增 `deleted_txn` 表，删除时留一份「墓碑」；
+   30 分钟内不接受同来源、同原文的通知重放。
+   顺带修掉一个相关缺陷：删除按钮在记录还没读出来时就可见，手快点了会静默失效；
+   现在读完才显示，并且删除结果会写进采集日志（能看到实际命中几行）。
+
+2. **连着付几笔，只记下了第一笔。**
+   原因：判重条件只有「金额 + 收支方向 + 时间窗（120 秒）」，于是同一时间段内金额相同的
+   后续几笔全被当成重复丢弃 —— 测试时连付几笔同样金额，正好全中。
+   修法：判重拆成三档，同来源要求「20 秒内且原文一字不差」才算重复，
+   跨来源（通知 / 短信 / 账单）之间才用较宽的时间窗。
+
+另外补了 **采集日志**（我的 → 采集日志）：每条付款通知的原文、识别结果、判重原因都会留痕，
+以后遇到漏记可以直接看日志定位，不必再连电脑抓 logcat。
+
+> 升级安装即可，原有账目不受影响（数据库会自动从 v1 迁移到 v2）。
+> 必须用同一个签名安装，否则系统会拒绝覆盖。
+

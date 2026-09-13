@@ -129,6 +129,7 @@ object BillImporter {
         }
 
         val (added, skipped) = LedgerRepository.insertBatch(list)
+        CaptureLog.add("导入", "$source：新增 $added 笔，跳过重复 $skipped 笔")
         return Result(source, added, skipped, list.size)
     }
 

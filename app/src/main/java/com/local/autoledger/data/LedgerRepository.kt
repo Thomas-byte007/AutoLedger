@@ -14,6 +14,18 @@ import java.util.Locale
  */
 object LedgerRepository {
 
+    /** 同一条通知被反复投递的判重窗口。窗口要短，否则「连续两笔同金额」会被误合并 */
+    private const val SAME_SOURCE_WINDOW_SEC = 20L
+
+    /** 跨来源（支付通知 / 银行短信 / 账单导入）判重窗口，要留够短信延迟的余量 */
+    private const val CROSS_SOURCE_WINDOW_SEC = 240L
+
+    /** 删除后多久之内拒绝同原文的记录重放。宁可少记（日志里看得见），也不要让删掉的记录自己长回来 */
+    private const val SUPPRESS_WINDOW_MS = 30 * 60 * 1000L
+
+    /** 墓碑保留时长 */
+    private const val TOMBSTONE_KEEP_MS = 3L * 24 * 60 * 60 * 1000
+
     private lateinit var helper: LedgerDb
 
     @Volatile
@@ -135,6 +147,12 @@ object LedgerRepository {
 
     // ------------------------------------------------------------------ 写入
 
+    /**
+     * 插入结果。[id] > 0 表示写入成功，否则 [reason] 说明为什么被丢弃。
+     * 采集日志会原样记录这个 reason，方便真机上定位「为什么这笔没记上」。
+     */
+    data class InsertResult(val id: Long, val reason: String)
+
     private fun fingerprint(t: Txn): String {
         val raw = listOf(
             t.channel.key, t.direction.code.toString(), t.amountCents.toString(),
@@ -145,29 +163,87 @@ object LedgerRepository {
     }
 
     /**
-     * 插入一条账目。
-     * [dedupWindowSec] 内金额与收支方向都相同的记录会被视为重复而丢弃 —— 因为
-     * 微信通知、银行短信、账单导入可能描述同一笔交易。
+     * 判断这笔该不该丢，返回 null 表示可以写入。
      *
-     * @return 新记录 id；重复时返回 -1
+     * 判重分三档，顺序不能换：
+     *  ① 墓碑：用户手动删掉的自动记账记录，不接受同原文的通知重放；
+     *  ② 同来源：同一条通知被系统重复投递，要求原文一字不差（窗口很短）；
+     *  ③ 跨来源：同一笔钱被通知 / 短信 / 账单分别描述，金额与方向一致即视为重复。
+     *
+     * ②③ 分开是关键。之前只按「金额 + 收支方向 + 时间窗」判重，
+     * 结果用户连着付几笔同金额的款（测试时最常见）只会记下第一笔。
+     */
+    private fun rejectReason(t: Txn, sameWindowSec: Long, crossWindowSec: Long): String? {
+        val db = helper.writableDatabase
+
+        if (t.rawText.isNotBlank()) {
+            db.rawQuery(
+                "SELECT id FROM deleted_txn WHERE channel=? AND amount_cents=? AND direction=? " +
+                    "AND raw_text=? AND occurred_at BETWEEN ? AND ? LIMIT 1",
+                arrayOf(
+                    t.channel.key, t.amountCents.toString(), t.direction.code.toString(), t.rawText,
+                    (t.occurredAt - SUPPRESS_WINDOW_MS).toString(),
+                    (t.occurredAt + SUPPRESS_WINDOW_MS).toString()
+                )
+            ).use { if (it.moveToFirst()) return "这笔已被你删除，忽略通知重放" }
+
+            db.rawQuery(
+                "SELECT id FROM txn WHERE channel=? AND amount_cents=? AND direction=? AND raw_text=? " +
+                    "AND occurred_at BETWEEN ? AND ? LIMIT 1",
+                arrayOf(
+                    t.channel.key, t.amountCents.toString(), t.direction.code.toString(), t.rawText,
+                    (t.occurredAt - sameWindowSec * 1000).toString(),
+                    (t.occurredAt + sameWindowSec * 1000).toString()
+                )
+            ).use { if (it.moveToFirst()) return "同一条通知重复投递（${sameWindowSec}s 内）" }
+        }
+
+        db.rawQuery(
+            "SELECT id FROM txn WHERE channel<>? AND amount_cents=? AND direction=? " +
+                "AND occurred_at BETWEEN ? AND ? LIMIT 1",
+            arrayOf(
+                t.channel.key, t.amountCents.toString(), t.direction.code.toString(),
+                (t.occurredAt - crossWindowSec * 1000).toString(),
+                (t.occurredAt + crossWindowSec * 1000).toString()
+            )
+        ).use { if (it.moveToFirst()) return "其他来源已记过同一笔（金额与收支方向相同）" }
+
+        return null
+    }
+
+    /**
+     * 插入一条账目，并说明判重结果。
+     *
+     * @param dedupWindowSec      跨来源判重的时间窗
+     * @param sameSourceWindowSec 同来源（同一条通知被重复投递）的时间窗
      */
     @Synchronized
-    fun insert(txn: Txn, dedupWindowSec: Long = 120, skipDedup: Boolean = false): Long {
+    fun insertDetailed(
+        txn: Txn,
+        dedupWindowSec: Long = CROSS_SOURCE_WINDOW_SEC,
+        skipDedup: Boolean = false,
+        sameSourceWindowSec: Long = SAME_SOURCE_WINDOW_SEC
+    ): InsertResult {
         val db = helper.writableDatabase
         if (!skipDedup) {
-            val from = txn.occurredAt - dedupWindowSec * 1000
-            val to = txn.occurredAt + dedupWindowSec * 1000
-            db.rawQuery(
-                "SELECT id FROM txn WHERE amount_cents=? AND direction=? AND occurred_at BETWEEN ? AND ? LIMIT 1",
-                arrayOf(txn.amountCents.toString(), txn.direction.code.toString(), from.toString(), to.toString())
-            ).use { c -> if (c.moveToFirst()) return -1L }
+            rejectReason(txn, sameSourceWindowSec, dedupWindowSec)?.let { return InsertResult(-1L, it) }
         }
         val cv = txn.toValues().apply {
             put("fingerprint", fingerprint(txn))
             put("created_at", System.currentTimeMillis())
         }
-        return db.insert("txn", null, cv)
+        val rowId = db.insert("txn", null, cv)
+        return if (rowId > 0L) InsertResult(rowId, "已记账") else InsertResult(-1L, "写入数据库失败")
     }
+
+    /**
+     * 插入一条账目。
+     *
+     * @return 新记录 id；判重命中时返回 -1
+     */
+    @Synchronized
+    fun insert(txn: Txn, dedupWindowSec: Long = CROSS_SOURCE_WINDOW_SEC, skipDedup: Boolean = false): Long =
+        insertDetailed(txn, dedupWindowSec, skipDedup).id
 
     /** UI 里的新增 / 编辑，不做去重 */
     @Synchronized
@@ -200,14 +276,50 @@ object LedgerRepository {
         return added to skipped
     }
 
+    /**
+     * 删除一条账目，并留下「墓碑」。
+     *
+     * 墓碑的作用：付款通知还挂在通知栏里时，系统可能重新投递一次，
+     * 那次重放会带着同样的金额和原文进来。没有墓碑的话，插入判重查不到
+     * 已被删掉的行，就会把用户刚删的这笔又写回去 —— 看起来就是「删了还在」。
+     *
+     * @return 实际删掉的行数，0 表示这条 id 已经不在库里
+     */
     @Synchronized
-    fun delete(id: Long) {
-        helper.writableDatabase.delete("txn", "id=?", arrayOf(id.toString()))
+    fun delete(id: Long): Int {
+        val db = helper.writableDatabase
+        db.rawQuery(
+            "SELECT channel, direction, amount_cents, merchant, raw_text, occurred_at FROM txn WHERE id=?",
+            arrayOf(id.toString())
+        ).use { c ->
+            if (c.moveToFirst()) {
+                val values = ContentValues().apply {
+                    put("channel", c.getString(0))
+                    put("direction", c.getInt(1))
+                    put("amount_cents", c.getLong(2))
+                    put("merchant", c.getString(3) ?: "")
+                    put("raw_text", c.getString(4) ?: "")
+                    put("occurred_at", c.getLong(5))
+                    put("deleted_at", System.currentTimeMillis())
+                }
+                if (!values.getAsString("raw_text").isNullOrBlank()) {
+                    db.insert("deleted_txn", null, values)
+                }
+            }
+        }
+        val removed = db.delete("txn", "id=?", arrayOf(id.toString()))
+        // 墓碑只用来挡通知重放，留三天足够
+        db.delete(
+            "deleted_txn", "deleted_at<?",
+            arrayOf((System.currentTimeMillis() - TOMBSTONE_KEEP_MS).toString())
+        )
+        return removed
     }
 
     @Synchronized
     fun deleteAll() {
         helper.writableDatabase.delete("txn", null, null)
+        helper.writableDatabase.delete("deleted_txn", null, null)
     }
 
     @Synchronized

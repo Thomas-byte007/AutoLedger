@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.local.autoledger.BuildConfig
 import com.local.autoledger.R
 import com.local.autoledger.capture.BillImporter
+import com.local.autoledger.capture.CaptureLog
 import com.local.autoledger.data.LedgerBus
 import com.local.autoledger.data.LedgerRepository
 import com.local.autoledger.data.Money
@@ -91,6 +92,9 @@ class SettingsFragment : Fragment() {
         binding.rowNotifyAccess.tvIcon.text = "⚙️"
         binding.rowNotifyAccess.tvTitle.text = "通知使用权设置"
         binding.rowNotifyAccess.tvSub.text = "在系统设置里手动开关"
+        binding.rowLog.tvIcon.text = "🧾"
+        binding.rowLog.tvTitle.text = "采集日志"
+        binding.rowLog.tvSub.text = "看看每条付款通知有没有被识别"
         binding.rowPrivacy.tvIcon.text = "🔒"
         binding.rowPrivacy.tvTitle.text = "隐私说明"
         binding.rowPrivacy.tvSub.text = "不联网，数据只在本机"
@@ -126,6 +130,9 @@ class SettingsFragment : Fragment() {
             createFile.launch("账本导出_${LocalDate.now()}.csv")
         }
         binding.rowStats.root.setOnClickListener { showStats() }
+        binding.rowLog.root.setOnClickListener {
+            startActivity(Intent(requireContext(), LogActivity::class.java))
+        }
         binding.rowNotifyAccess.root.setOnClickListener {
             PermissionsUtil.openNotificationAccessSettings(requireContext())
         }
@@ -177,8 +184,13 @@ class SettingsFragment : Fragment() {
         binding.rowSms.switchView.isChecked = Prefs.smsEnabled
 
         lifecycleScope.launch {
-            val count = withContext(Dispatchers.IO) { LedgerRepository.rules().size }
-            if (_binding != null) binding.rowRules.tvValue.text = "$count 条"
+            val counts = withContext(Dispatchers.IO) {
+                LedgerRepository.rules().size to CaptureLog.count()
+            }
+            if (_binding != null) {
+                binding.rowRules.tvValue.text = "${counts.first} 条"
+                binding.rowLog.tvValue.text = if (counts.second > 0) "${counts.second} 条" else ""
+            }
         }
     }
 

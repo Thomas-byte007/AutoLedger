@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.local.autoledger.R
+import com.local.autoledger.capture.CaptureLog
 import com.local.autoledger.data.Categories
 import com.local.autoledger.data.Channel
 import com.local.autoledger.data.Direction
@@ -67,7 +68,8 @@ class EditTransactionActivity : AppCompatActivity() {
         val id = intent.getLongExtra(EXTRA_ID, -1L)
         if (id > 0L) {
             binding.tvTitle.text = "编辑记录"
-            binding.btnDelete.isVisible = true
+            // 记录是异步读出来的，读完再露删除按钮 —— 否则快速点击会撞上 editing 还是 null
+            binding.btnDelete.isVisible = false
             lifecycleScope.launch {
                 val t = withContext(Dispatchers.IO) { LedgerRepository.byId(id) }
                 if (t == null) {
@@ -78,6 +80,7 @@ class EditTransactionActivity : AppCompatActivity() {
             }
         } else {
             binding.tvTitle.text = "记一笔"
+            binding.btnDelete.isVisible = false
         }
 
         renderSegment()
@@ -149,6 +152,7 @@ class EditTransactionActivity : AppCompatActivity() {
         categoryKey = Categories.byKey(t.categoryKey, t.direction).key
         occurredAt = t.occurredAt
         userPicked = !t.autoCategory
+        binding.btnDelete.isVisible = true
 
         binding.etAmount.setText(Money.plain(t.amountCents))
         binding.etAmount.setSelection(binding.etAmount.text?.length ?: 0)
@@ -242,15 +246,30 @@ class EditTransactionActivity : AppCompatActivity() {
     }
 
     private fun confirmDelete() {
-        val t = editing ?: return
+        val t = editing
+        if (t == null) {
+            Toast.makeText(this, "记录还在读取，稍等一下", Toast.LENGTH_SHORT).show()
+            return
+        }
         MaterialAlertDialogBuilder(this)
             .setTitle("删除这条记录？")
-            .setMessage("删除后无法恢复。")
+            .setMessage("删除后无法恢复。之后即使付款通知被系统重放，也不会把这条写回来。")
             .setNegativeButton("取消", null)
             .setPositiveButton("删除") { _, _ ->
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO) { LedgerRepository.delete(t.id) }
+                    val removed = withContext(Dispatchers.IO) { LedgerRepository.delete(t.id) }
+                    val merchant = if (t.merchant.isNotBlank()) " · ${t.merchant}" else ""
+                    CaptureLog.add(
+                        "删除",
+                        "命中 $removed 行 · ${t.channel.label} " +
+                            "${Money.signed(t.amountCents, t.direction)}$merchant"
+                    )
                     LedgerBus.notifyChanged()
+                    Toast.makeText(
+                        this@EditTransactionActivity,
+                        if (removed > 0) "已删除" else "这条记录已经不在了",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     finish()
                 }
             }

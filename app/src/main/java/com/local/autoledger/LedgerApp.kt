@@ -1,6 +1,7 @@
 package com.local.autoledger
 
 import android.app.Application
+import com.local.autoledger.capture.CaptureLog
 import com.local.autoledger.data.LedgerRepository
 import com.local.autoledger.data.Prefs
 
@@ -14,6 +15,7 @@ class LedgerApp : Application() {
         instance = this
         Prefs.init(this)
         LedgerRepository.init(this)
+        CaptureLog.init(this)
         // 后台把内置分类规则灌进数据库，避免首次记账时卡主线程
         Thread {
             runCatching { LedgerRepository.rules() }
