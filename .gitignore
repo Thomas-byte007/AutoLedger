@@ -13,6 +13,13 @@
 # 例外：保留 dist 下正式发布的 APK，便于直接在 Releases/Clone 后安装
 !dist/*.apk
 
+# ---- 端到端测试产物（截图 / 数据库快照 / 采集日志），本地看就行，不入库 ----
+/dist/emulator-e2e/
+
+# ---- Python 字节码（tools 下的辅助脚本）----
+__pycache__/
+*.pyc
+
 # ---- 本地环境 / IDE ----
 /local.properties
 local.properties

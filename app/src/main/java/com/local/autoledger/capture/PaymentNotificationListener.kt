@@ -47,13 +47,21 @@ class PaymentNotificationListener : NotificationListenerService() {
             ?.joinToString(" ") { it?.toString().orEmpty() }.orEmpty()
         val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString().orEmpty()
 
+        // distinct() 不能省：BigTextStyle 会把同一段正文同时塞进 EXTRA_TEXT 和 EXTRA_BIG_TEXT，
+        // 直接拼接会让原文重复两三遍，落库的 raw_text 就不干净了
+        // （字段本身重复对解析无害，但判重和日志都是拿原文比的，越干净越好）。
         val combined = listOf(title, text, bigText, lines, subText)
             .filter { it.isNotBlank() }
+            .distinct()
             .joinToString(" ")
 
         val postTime = if (sbn.postTime > 0L) sbn.postTime else System.currentTimeMillis()
         val nKey = "$pkg|${sbn.id}|${sbn.tag.orEmpty()}"
         val label = if (pkg == PaymentParser.PKG_WECHAT) "微信" else "支付宝"
+
+        // 系统偶尔会投递一条正文为空的更新（分组摘要之类），没有可识别的内容，
+        // 别往采集日志里灌"未识别"噪音，真机排查时那些才是有价值的信息
+        if (combined.isBlank()) return
 
         executor.execute {
             try {

@@ -36,6 +36,8 @@ object LedgerRepository {
 
     fun init(context: Context) {
         helper = LedgerDb(context.applicationContext)
+        // helper 换了一个，规则缓存也必须跟着失效（否则单测里第二次 init 后分类会全部落空）
+        rulesLoaded = false
     }
 
     // ------------------------------------------------------------------ 规则

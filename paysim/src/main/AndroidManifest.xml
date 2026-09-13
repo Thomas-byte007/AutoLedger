@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Android 13+ 投递通知要这个权限，测试脚本里用 pm grant 授上 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:label="@string/sim_app_name"
+        android:supportsRtl="true">
+
+        <activity
+            android:name=".SimActivity"
+            android:exported="true"
+            android:label="@string/sim_app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- adb shell am broadcast -n <本包名>/com.local.paysim.SimReceiver 即可发一条假支付通知 -->
+        <receiver
+            android:name=".SimReceiver"
+            android:exported="true" />
+
+    </application>
+
+</manifest>

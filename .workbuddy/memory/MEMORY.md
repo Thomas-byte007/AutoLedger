@@ -42,6 +42,47 @@
 - **排查靠采集日志**：`CaptureLog`（存 `filesDir/capture.log`，300 行上限），
   入口「我的 → 采集日志」。新增采集分支时记得补一行日志，否则真机问题查不了。
 
+## 测试（改完代码先跑，全程电脑端闭环，不用真机）
+
+单元测试（主力回归，秒级）：
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest
+```
+
+52 个用例：`MoneyTest` / `PaymentParserTest` / `CategoryEngineTest` / `LedgerRepositoryTest`
+（最后一个用 Robolectric 起真实 SQLite）。结果 XML 在
+`D:\Project\AutoLedger-build\app\test-results\testDebugUnitTest\`。
+
+模拟器端到端：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\emulator-e2e.ps1
+```
+
+`tools/emulator-e2e.ps1` + `tools/ledger_assert.py`：起模拟器 → 装 APK → 投假支付通知 →
+拉库断言 → 驱动界面删除 → 截图存 `dist/emulator-e2e/`。
+
+### 测试基础设施的坑（改之前先看）
+
+- **中文项目路径会让 Gradle test worker 全部 `ClassNotFoundException`**。
+  修法在根 `build.gradle.kts`：build 目录重定位到 `D:\Project\AutoLedger-build`。
+  **别删那段逻辑**，也别以为测试挂是自己代码的问题。
+- **模拟器 AVD 必须在 D 盘**：用户环境变量 `ANDROID_AVD_HOME=D:\develop\android-avd`。
+  默认的 `~/.android/avd` 往 C 盘写，一次能吃掉 9.7 GB（关机时写的 6 GB `userdata-qemu.img`
+  + 2.5 GB 快照）。`config.ini` 已关快照、`disk.dataPartition.size` 限到 3072M。
+- **`:paysim` 是测试专用马甲模块**：两个 flavor 分别伪装 `com.tencent.mm` /
+  `com.eg.android.AlipayGphone`。原理是 `NotificationListenerService` 按安装包名认来源，
+  不真的装这个包名就测不了通知抓取。文案走 **Base64**（`--es text64`）传，
+  因为 adb shell 传中文会乱码，而乱码会改变解析结果、测的就不是真实逻辑了。
+- **`.ps1` 必须带 UTF-8 BOM**：Windows PowerShell 5.1 否则按 GBK 读，中文乱码、引号被撑破，
+  报一堆「意外的标记 }」。加 BOM 用 `[System.IO.File]::WriteAllBytes` 拼 `0xEF,0xBB,0xBF`。
+- **拉设备上的二进制别用 `cmd /c "... > file"`**（会过文本编码导致损坏，还容易被沙箱卡住）：
+  用 `Start-Process -RedirectStandardOutput`，或 `adb shell screencap` + `adb pull`。
+- **`pm clear` 会把运行时权限打回未授权**，启动 App 时系统弹权限框盖住界面，
+  uiautomator 只能 dump 到对话框。跑界面自动化前先 `pm grant` 再启动。
+- 本机删除走回收站，`Remove-Item` 后磁盘空间**不会**立刻释放，得再清一次回收站。
+
 ## 构建命令（本机）
 
 ```powershell
