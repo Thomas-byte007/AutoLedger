@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 折叠分区表头：一行可点标题，展开 / 收起它下面的 Low-frequency 行 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ripple_item"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/row_height"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/gap_l"
+    android:paddingTop="@dimen/gap_m"
+    android:paddingEnd="@dimen/gap_l"
+    android:paddingBottom="@dimen/gap_m">
+
+    <TextView
+        android:id="@+id/tvFoldTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold"
+        tools:text="稳定运行" />
+
+    <TextView
+        android:id="@+id/tvFoldValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gap_xs"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_tertiary"
+        android:textSize="@dimen/text_small"
+        tools:text="2 项已开" />
+
+    <ImageView
+        android:id="@+id/ivFoldArrow"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_chevron_down"
+        app:tint="@color/text_tertiary" />
+
+</LinearLayout>

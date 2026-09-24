@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 数码电子（由 tools/gen_cat_icons.py 生成，改图标请改脚本后重跑） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M6 5.4h12a1.6 1.6 0 0 1 1.6 1.6v7H4.4V7A1.6 1.6 0 0 1 6 5.4z"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M3.2 14h17.6l-1.4 2.2a1.6 1.6 0 0 1-1.4.8H6a1.6 1.6 0 0 1-1.4-.8z"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

@@ -31,3 +31,18 @@ keystore/
 *.jks
 *.keystore
 *.p12
+
+# ---- WorkBuddy 工作区（笔记与临时产物），纯属本地，不入库 ----
+/.workbuddy/
+/_emu.log
+/_ui_verify.log
+/_verify_v140.log
+
+# ---- 设计插件的本地素材，与项目代码无关 ----
+/.agents/
+/.github/
+
+# ---- 支付模拟器与 UI 验收的临时产物 ----
+/paysim/build/
+/dist/icon-preview/
+/dist/ui-verify/

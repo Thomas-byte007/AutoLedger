@@ -5,11 +5,10 @@ import com.local.autoledger.data.Channel
 import com.local.autoledger.data.Direction
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * 支付通知 / 银行短信的解析。纯字符串处理，不需要设备。
+ * 支付通知 / 支付成功页文本的解析。纯字符串处理，不需要设备。
  *
  * 这里的用例就是「自动记账到底认不认得出」的第一道防线：
  * 真机上收到通知却记不上账，先看这些用例还过不过。
@@ -145,47 +144,5 @@ class PaymentParserTest {
     @Test
     fun `非微信支付宝的包名不处理`() {
         assertNull(PaymentParser.parseNotification("com.example.pay", "支付成功 25.00元"))
-    }
-
-    // ------------------------------------------------------------ 银行短信
-
-    @Test
-    fun `银行消费短信`() {
-        val p = PaymentParser.parseSms(
-            "95588", "您尾号1234的储蓄卡消费人民币25.00元，商户名称：星巴克", 1_700_000_000_000L
-        )!!
-        assertEquals(2500L, p.amountCents)
-        assertEquals(Direction.EXPENSE, p.direction)
-        assertEquals(Channel.SMS, p.channel)
-        assertEquals("银行卡(尾号1234)", p.payMethod)
-        assertEquals("星巴克", p.merchant)
-    }
-
-    @Test
-    fun `银行入账短信`() {
-        val p = PaymentParser.parseSms("95588", "您尾号1234的储蓄卡入账人民币8000.00元", 1L)!!
-        assertEquals(800000L, p.amountCents)
-        assertEquals(Direction.INCOME, p.direction)
-    }
-
-    @Test
-    fun `短信里的验证码不记`() {
-        assertNull(PaymentParser.parseSms("95588", "您尾号1234的储蓄卡验证码123456，请勿告知他人", 1L))
-    }
-
-    @Test
-    fun `没写元的数字不会被当金额`() {
-        // 「尾号 1234」这种数字不能算钱
-        assertNull(PaymentParser.parseSms("95588", "您尾号1234的储蓄卡有一笔待确认交易", 1L))
-    }
-
-    @Test
-    fun `识别银行发件人`() {
-        assertTrue(PaymentParser.looksLikeBankSender("95588"))
-        assertTrue(PaymentParser.looksLikeBankSender("95533"))
-        assertTrue(PaymentParser.looksLikeBankSender("中国工商银行"))
-        assertTrue(!PaymentParser.looksLikeBankSender("10086"))
-        assertTrue(!PaymentParser.looksLikeBankSender("10690001"))
-        assertTrue(!PaymentParser.looksLikeBankSender(null))
     }
 }

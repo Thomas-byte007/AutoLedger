@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  启动引导弹窗：系统无障碍服务没开时的提示。
+  结构刻意做矮：标题 + 一段用途说明 + 一块小米机型路径，两个按钮交给 MaterialAlertDialogBuilder，
+  这样按钮的点击区（48dp）和排列规则跟全 App 的其他弹窗一致。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/gap_l"
+    android:paddingTop="@dimen/gap_s"
+    android:paddingEnd="@dimen/gap_l"
+    android:paddingBottom="@dimen/gap_s">
+
+    <!-- 头部：图标 + 标题。图标只是装饰，标题已经把意思说完了，所以不进无障碍树 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="@color/brand_container">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_settings_access"
+                app:tint="@color/brand_primary" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/gap_m"
+            android:layout_weight="1"
+            android:text="@string/access_prompt_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 用途说明：先讲收益，再讲边界，用户最关心的就是这两件事 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gap_m"
+        android:lineSpacingExtra="3dp"
+        android:text="@string/access_prompt_body"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body" />
+
+    <!-- 小米路径：单独一块浅底卡片，扫一眼就能照着点 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gap_m"
+        android:background="@drawable/bg_round_soft_filled"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/gap_m"
+        android:paddingTop="@dimen/gap_m"
+        android:paddingEnd="@dimen/gap_m"
+        android:paddingBottom="@dimen/gap_m">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/access_prompt_path_label"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_small"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_xs"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/access_prompt_path"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_body"
+            tools:text="设置 → 无障碍功能 → 已安装的服务 → 随手记 → 打开开关并确认" />
+    </LinearLayout>
+</LinearLayout>

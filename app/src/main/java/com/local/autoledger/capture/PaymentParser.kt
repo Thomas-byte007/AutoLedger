@@ -5,12 +5,11 @@ import com.local.autoledger.data.Direction
 import com.local.autoledger.data.Money
 
 /**
- * 从「通知文本 / 短信文本」里还原出一笔交易。
+ * 从一条支付通知 / 支付结果页文本里还原出一笔交易。
  *
  * 微信和支付宝的支付通知都是一句话，例如：
  *   微信支付: 已支付¥25.00        支付宝: 支付成功 25.00元
  *   微信支付: 微信红包 已存入零钱   支付宝: 收款成功 88.00元
- * 银行短信形态更多，但同样可以靠「金额 + 收支关键词」抽出来。
  *
  * 解析原则：宁可漏，不可错。金额和收支方向必须同时命中，否则一律丢弃。
  */
@@ -39,6 +38,30 @@ object PaymentParser {
         "支付成功", "付款成功", "已支付", "已付款", "支付了", "支出", "扣款", "消费",
         "付款", "支付", "已转账", "转出"
     )
+
+    /**
+     * 支付成功页上才会出现的字样。
+     *
+     * 只认「已经付完了」的确定性表达，不认「正在支付 / 等待付款」这类中间态 ——
+     * 中间态页面同样有金额，但那笔钱还没出去。
+     */
+    private val SCREEN_HINTS = listOf(
+        "支付成功", "付款成功", "交易成功", "已付款", "支付完成", "付款完成",
+        "已完成支付", "收款成功", "退款成功", "已存入零钱", "已存入余额"
+    )
+
+    /** 页面上的中间态 / 诱导性文案，命中就不记 */
+    private val SCREEN_NOISE = listOf(
+        "等待对方确认", "等待付款", "确认付款", "请输入支付密码", "正在支付",
+        "支付中", "付款方式选择", "立即付款", "去支付", "免密支付开通",
+        "向你付款", "向你转账", "请你确认收款", "已过期", "待收款"
+    )
+
+    /** 支付结果页只有几个字；超过这个长度基本就是账单列表页了 */
+    private const val SCREEN_MAX_CHARS = 260
+
+    /** 页面兜底金额：必须带两位小数，避免把日期、件数之类的数字认成钱 */
+    private val SCREEN_AMOUNT_RE = Regex("""-?\s*([0-9][0-9,]*\.[0-9]{2})""")
 
     /** 明显不是记账的场景，直接排除 */
     private val NOISE_HINTS = listOf(
@@ -73,8 +96,6 @@ object PaymentParser {
             "|[（(]尾号?(\\d{4})[)）]|尾号(\\d{4})"
     )
 
-    private val CARD_TAIL_RE = Regex("""尾号(\d{4})""")
-
     // ------------------------------------------------------------- 通知
 
     /**
@@ -107,58 +128,52 @@ object PaymentParser {
         )
     }
 
-    // ------------------------------------------------------------- 短信
+    // ------------------------------------------------------------- 支付成功页（无障碍）
 
-    private val SMS_NOISE = listOf(
-        "验证码", "校验码", "退订", "回复TD", "优惠", "活动", "理财", "贷款", "额度",
-        "分期", "推荐", "积分兑换", "中奖", "免费领取"
-    )
+    /**
+     * 无障碍链路专用：读微信 / 支付宝「支付成功」页。
+     *
+     * 这条链路解决的是「支付宝压根不弹通知」的场景 —— 通知监听再稳也拿不到一条
+     * 系统里根本不存在的通知，而支付成功页是必然会出现的。
+     *
+     * 页面文本比通知脏得多（一屏上所有的字都会进来），所以门槛要比通知高：
+     *  1. 必须命中明确的「成功」字样，光有金额不行；
+     *  2. 文本过长的一律丢 —— 账单列表页同样写着「交易成功」并带着一堆金额，
+     *     真正的结果页只有寥寥几个字，用长度把列表页挡在门外；
+     *  3. 方向同样必须能判定，判不出来就不记。
+     *
+     * 原则不变：宁可漏，不可错。
+     */
+    fun parsePaymentScreen(pkg: String, text: String): Parsed? {
+        val channel = when (pkg) {
+            PKG_WECHAT -> Channel.WECHAT
+            PKG_ALIPAY -> Channel.ALIPAY
+            else -> return null
+        }
+        val body = text.replace('\n', ' ').replace(Regex("\\s+"), " ").trim()
+        if (body.isEmpty()) return null
+        if (body.length > SCREEN_MAX_CHARS) return null
+        if (!containsAny(body, SCREEN_HINTS)) return null
+        if (containsAny(body, NOISE_HINTS) || containsAny(body, SCREEN_NOISE)) return null
 
-    /** 银行卡消费 / 入账短信 */
-    fun parseSms(sender: String, body: String, timeMs: Long): Parsed? {
-        val t = body.replace('\n', ' ').trim()
-        if (t.isEmpty()) return null
-        if (containsAny(t, SMS_NOISE)) return null
-
-        val amount = extractAmount(t) ?: return null
-        val direction = decideDirection(t) ?: return null
-
-        val tail = CARD_TAIL_RE.find(t)?.groupValues?.get(1)
-        val payMethod = if (tail != null) "银行卡(尾号$tail)" else extractPayMethod(t)
-
-        // 商户名：优先取短信里明确给出的字段
-        val merchant = MERCHANT_RES.asSequence()
-            .mapNotNull { it.find(t)?.groupValues?.get(1) }
-            .map { it.trim() }
-            .firstOrNull { it.isNotBlank() && !it.contains("尾号") }
-            ?: ""
+        // 支付成功页上的金额常常不带「¥ / 元」，就是一个 -12.50。
+        // 兜底正则要求带两位小数，正是为了不把日期、数量之类的数字当成钱。
+        val amount = extractAmount(body) ?: extractScreenAmount(body) ?: return null
+        val direction = decideDirection(body) ?: return null
 
         return Parsed(
             amountCents = amount,
             direction = direction,
-            merchant = merchant,
-            payMethod = payMethod,
-            channel = Channel.SMS,
-            rawText = "$sender | $t".trim()
+            merchant = extractMerchant(body, channel),
+            payMethod = extractPayMethod(body),
+            channel = channel,
+            rawText = body
         )
     }
 
-    /** 该发件人是否像银行 / 卡组织 */
-    fun looksLikeBankSender(sender: String?): Boolean {
-        if (sender.isNullOrBlank()) return false
-        val s = sender.trim()
-        val bankShortCodes = listOf(
-            "95588", "95533", "95555", "95599", "95566", "95559", "95561", "95511",
-            "95595", "95558", "95528", "95501", "95577", "95508", "95594", "95568",
-            "95313", "95308"
-        )
-        if (bankShortCodes.any { s.endsWith(it) || s.startsWith(it) }) return true
-        val bankNames = listOf(
-            "银行", "工商", "建设", "农业", "招商", "交通银行", "中信", "浦发", "民生",
-            "光大", "华夏", "兴业", "平安银行", "广发", "邮储", "银联", "信用卡"
-        )
-        if (bankNames.any { s.contains(it) }) return true
-        return s.startsWith("106") && s.length <= 20 && s.contains("银行")
+    private fun extractScreenAmount(text: String): Long? {
+        val m = SCREEN_AMOUNT_RE.find(text) ?: return null
+        return Money.parseToCents(m.groupValues[1])
     }
 
     // ------------------------------------------------------------- 内部

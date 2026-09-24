@@ -1,7 +1,6 @@
 package com.local.autoledger.ui
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +9,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.local.autoledger.R
-import com.local.autoledger.data.CategoryStat
+import com.local.autoledger.data.Direction
+import com.local.autoledger.data.GroupStat
 import com.local.autoledger.data.LedgerBus
 import com.local.autoledger.data.LedgerRepository
 import com.local.autoledger.data.Money
+import com.local.autoledger.data.MonthPoint
 import com.local.autoledger.data.MonthSummary
 import com.local.autoledger.data.TimeFmt
 import com.local.autoledger.databinding.FragmentReportBinding
@@ -28,7 +29,12 @@ import java.time.YearMonth
 import java.util.Locale
 import kotlin.math.roundToInt
 
-/** 报表页：月度分类统计 + 占比 + 趋势 */
+/**
+ * 报表页：月度总览 + 分类占比 + 趋势。
+ *
+ * 「支出分布 / 收入来源」只排一级类，点一行进下钻页
+ * （[CategoryBreakdownActivity]），那里同时给出二级类构成和交易明细。
+ */
 class ReportFragment : Fragment() {
 
     private var _binding: FragmentReportBinding? = null
@@ -36,6 +42,11 @@ class ReportFragment : Fragment() {
 
     private var ym: YearMonth = YearMonth.now()
     private val refresh: () -> Unit = { load() }
+
+    private var expenseGroups: List<GroupStat> = emptyList()
+    private var incomeGroups: List<GroupStat> = emptyList()
+    private var expenseTotal: Long = 0L
+    private var incomeTotal: Long = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +71,8 @@ class ReportFragment : Fragment() {
         binding.pendingBanner.setOnClickListener {
             (activity as? MainActivity)?.goToTab(R.id.nav_detail)
         }
+        // 点月份标题：底部滑出「选择时间」面板，直接挑任意月份或全年（年度账单并入这里）
+        binding.tvMonth.setOnClickListener { showPeriodPicker() }
         load()
     }
 
@@ -95,7 +108,7 @@ class ReportFragment : Fragment() {
     private fun render(
         summary: MonthSummary,
         prev: MonthSummary,
-        trend: List<com.local.autoledger.data.MonthPoint>
+        trend: List<MonthPoint>
     ) {
         val ctx = requireContext()
         binding.tvMonth.text = TimeFmt.monthLabel(ym)
@@ -118,55 +131,42 @@ class ReportFragment : Fragment() {
             binding.tvPending.text = "本月有 ${summary.pendingCount} 笔还没分类，点这里去处理"
         }
 
-        // 分类占比
-        val stats = summary.expenseStats
-        val hasExpense = stats.isNotEmpty()
+        expenseGroups = summary.expenseGroups
+        incomeGroups = summary.incomeGroups
+        expenseTotal = summary.expenseCents
+        incomeTotal = summary.incomeCents
+
+        val hasExpense = expenseGroups.isNotEmpty()
         binding.catEmpty.isVisible = !hasExpense
         binding.donut.isVisible = hasExpense
 
         if (hasExpense) {
-            val top = stats.take(MAX_SLICES)
-            val restAmount = stats.drop(MAX_SLICES).sumOf { it.amountCents }
+            val top = expenseGroups.take(MAX_SLICES)
+            val restAmount = expenseGroups.drop(MAX_SLICES).sumOf { it.amountCents }
             val slices = top.map {
                 DonutChartView.Slice(
                     it.amountCents,
-                    ThemeUtil.color(ctx, it.category.colorRes)
+                    ThemeUtil.color(ctx, it.group.colorRes)
                 )
             }.toMutableList()
             if (restAmount > 0) {
-                slices += DonutChartView.Slice(
-                    restAmount,
-                    ThemeUtil.color(ctx, R.color.cat_other)
-                )
+                slices += DonutChartView.Slice(restAmount, ThemeUtil.color(ctx, R.color.cat_other))
             }
-            binding.donut.setData(
-                slices,
-                Money.plain(summary.expenseCents),
-                "本月支出"
-            )
-            buildLegend(binding.legendContainer, top, summary.expenseCents)
+            binding.donut.setData(slices, Money.plain(summary.expenseCents), "本月支出")
         } else {
             binding.donut.setData(emptyList(), "", "")
-            binding.legendContainer.removeAllViews()
         }
+        binding.tvExpenseDistTotal.text = Money.yuan(summary.expenseCents)
 
-        // 收入构成
-        val incomeStats = summary.incomeStats
-        binding.incomeSection.isVisible = incomeStats.isNotEmpty()
-        if (incomeStats.isNotEmpty()) {
-            buildLegend(binding.legendIncomeContainer, incomeStats, summary.incomeCents)
-        } else {
-            binding.legendIncomeContainer.removeAllViews()
-        }
+        binding.incomeSection.isVisible = incomeGroups.isNotEmpty()
+        binding.tvIncomeTotal.text = Money.yuan(summary.incomeCents)
+
+        renderDistributions()
 
         // 趋势
         binding.barChart.setData(
             trend.map {
-                BarChartView.Bar(
-                    "${it.yearMonth.monthValue}月",
-                    it.expenseCents,
-                    it.incomeCents
-                )
+                BarChartView.Bar("${it.yearMonth.monthValue}月", it.expenseCents, it.incomeCents)
             }
         )
 
@@ -186,7 +186,7 @@ class ReportFragment : Fragment() {
                     ThemeUtil.color(ctx, R.color.brand_primary)
                 }
                 row.dot.backgroundTintList = ColorStateList.valueOf(color)
-                row.tvEmoji.text = ""
+                row.ivIcon.visibility = View.GONE
                 row.tvName.text = name
                 row.tvRatio.text = ""
                 row.tvAmount.text = Money.plain(amount)
@@ -197,25 +197,48 @@ class ReportFragment : Fragment() {
         }
     }
 
-    private fun buildLegend(
-        container: android.widget.LinearLayout,
-        stats: List<CategoryStat>,
-        total: Long
-    ) {
-        val ctx = requireContext()
-        container.removeAllViews()
-        stats.forEach { stat ->
-            val row = ItemCatStatBinding.inflate(layoutInflater, container, false)
-            val color = ThemeUtil.color(ctx, stat.category.colorRes)
-            row.dot.backgroundTintList = ColorStateList.valueOf(color)
-            row.tvEmoji.text = stat.category.emoji
-            row.tvName.text = stat.category.label
-            row.tvRatio.text = String.format(Locale.US, "%.1f%%", stat.ratio * 100)
-            row.tvAmount.text = Money.plain(stat.amountCents)
-            row.bar.progressTintList = ColorStateList.valueOf(color)
-            row.bar.progress = (stat.ratio * 1000f).roundToInt().coerceIn(0, 1000)
-            container.addView(row.root)
-        }
+    // ------------------------------------------------------------------ 分布列表
+
+    private fun renderDistributions() {
+        DistributionList.render(
+            layoutInflater,
+            binding.distExpenseContainer,
+            expenseGroups,
+            Direction.EXPENSE,
+            ::openGroup
+        )
+        DistributionList.render(
+            layoutInflater,
+            binding.distIncomeContainer,
+            incomeGroups,
+            Direction.INCOME,
+            ::openGroup
+        )
+    }
+
+    /** 点一级类 → 下钻页（二级类构成 + 交易明细） */
+    private fun openGroup(direction: Direction, groupKey: String, label: String) {
+        val ratio = (if (direction == Direction.EXPENSE) expenseGroups else incomeGroups)
+            .firstOrNull { it.group.key == groupKey }?.ratio ?: -1f
+        startActivity(
+            CategoryBreakdownActivity.intent(requireContext(), ym, direction, groupKey, ratio)
+        )
+    }
+
+    private fun showPeriodPicker() {
+        PeriodPickerSheet(
+            activity = requireActivity(),
+            ym = ym,
+            onMonthPicked = { picked ->
+                if (picked != ym) {
+                    ym = picked
+                    load()
+                }
+            },
+            onYearPicked = { year ->
+                startActivity(YearReportActivity.intent(requireContext(), year))
+            }
+        ).show()
     }
 
     private fun compareText(cur: MonthSummary, prev: MonthSummary): String {

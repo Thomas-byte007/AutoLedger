@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="12dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="@dimen/page_padding"
+        android:paddingTop="@dimen/gap_m"
+        android:paddingEnd="@dimen/page_padding"
         android:paddingBottom="28dp">
 
         <!-- 月份切换 -->
@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
+            android:paddingStart="@dimen/gap_xs"
+            android:paddingEnd="@dimen/gap_xs">
 
             <TextView
                 android:layout_width="0dp"
@@ -31,16 +31,16 @@
                 android:layout_weight="1"
                 android:text="@string/report_title"
                 android:textColor="@color/text_primary"
-                android:textSize="20sp"
+                android:textSize="@dimen/text_title_lg"
                 android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/btnPrevMonth"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
+                android:layout_width="@dimen/touch_min"
+                android:layout_height="@dimen/touch_min"
                 android:background="@drawable/bg_round_soft"
                 android:contentDescription="上个月"
-                android:padding="8dp"
+                android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_left"
                 app:tint="@color/text_secondary" />
@@ -49,21 +49,27 @@
                 android:id="@+id/tvMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"
+                android:layout_marginStart="@dimen/gap_xs"
+                android:layout_marginEnd="@dimen/gap_xs"
+                android:background="@drawable/bg_round_soft"
+                android:contentDescription="选择月份"
                 android:minWidth="76dp"
                 android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingTop="7dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="7dp"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_body"
                 android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/btnNextMonth"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
+                android:layout_width="@dimen/touch_min"
+                android:layout_height="@dimen/touch_min"
                 android:background="@drawable/bg_round_soft"
                 android:contentDescription="下个月"
-                android:padding="8dp"
+                android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_right"
                 app:tint="@color/text_secondary" />
@@ -73,9 +79,9 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="@dimen/gap_m"
             app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="24dp"
+            app:cardCornerRadius="@dimen/card_radius_lg"
             app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
@@ -101,13 +107,14 @@
                     android:fontFamily="sans-serif-medium"
                     android:text="¥0.00"
                     android:textColor="#FFFFFF"
-                    android:textSize="32sp" />
+                    android:textSize="@dimen/text_hero"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvCompare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="@dimen/gap_xs"
                     android:alpha="0.9"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
@@ -115,13 +122,13 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/gap_l"
                     android:background="@color/divider_translucent" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="@dimen/gap_m"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -145,7 +152,8 @@
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/text_subtitle"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -169,7 +177,8 @@
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/text_subtitle"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -193,7 +202,8 @@
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
                             android:textColor="#FFFFFF"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/text_subtitle"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -204,14 +214,14 @@
             android:id="@+id/pendingBanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/gap_m"
             android:background="@drawable/bg_banner"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="14dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="14dp"
-            android:paddingBottom="12dp"
+            android:paddingStart="@dimen/gap_l"
+            android:paddingTop="@dimen/gap_m"
+            android:paddingEnd="@dimen/gap_l"
+            android:paddingBottom="@dimen/gap_m"
             android:visibility="gone">
 
             <TextView
@@ -229,12 +239,12 @@
                 app:tint="@color/badge_pending_text" />
         </LinearLayout>
 
-        <!-- 支出构成 -->
+        <!-- 支出分布：环形图 + 一级类排名，可展开看二级类 -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="@dimen/gap_m"
+            app:cardCornerRadius="@dimen/card_radius"
             app:cardElevation="0dp"
             app:strokeColor="@color/divider"
             app:strokeWidth="1dp">
@@ -243,58 +253,58 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="18dp">
+                android:paddingStart="18dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="10dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/report_category_rank"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/report_expense_dist"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvExpenseDistTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_small" />
+                </LinearLayout>
 
                 <com.local.autoledger.ui.widget.DonutChartView
                     android:id="@+id/donut"
                     android:layout_width="match_parent"
-                    android:layout_height="196dp"
-                    android:layout_marginTop="14dp" />
+                    android:layout_height="188dp"
+                    android:layout_marginTop="@dimen/gap_s" />
 
                 <LinearLayout
-                    android:id="@+id/legendContainer"
+                    android:id="@+id/distExpenseContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="@dimen/gap_xs"
                     android:orientation="vertical" />
 
-                <LinearLayout
-                    android:id="@+id/incomeSection"
+                <TextView
+                    android:id="@+id/tvDistHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@color/divider" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:text="收入构成"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:id="@+id/legendIncomeContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </LinearLayout>
+                    android:gravity="center"
+                    android:paddingTop="@dimen/gap_m"
+                    android:paddingBottom="@dimen/gap_s"
+                    android:text="@string/report_dist_hint"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="@dimen/text_small" />
 
                 <LinearLayout
                     android:id="@+id/catEmpty"
@@ -302,20 +312,20 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:paddingTop="36dp"
-                    android:paddingBottom="36dp"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="40dp"
                     android:visibility="gone">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📊"
-                        android:textSize="36sp" />
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_empty_chart" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="@dimen/gap_m"
                         android:text="这个月还没有支出记录"
                         android:textColor="@color/text_secondary"
                         android:textSize="13sp" />
@@ -323,12 +333,65 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- 收入来源 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/incomeSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_m"
+            app:cardCornerRadius="@dimen/card_radius"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/divider"
+            app:strokeWidth="1dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/report_income_source"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvIncomeTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_small" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distIncomeContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- 近 6 个月趋势 -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="@dimen/gap_m"
+            app:cardCornerRadius="@dimen/card_radius"
             app:cardElevation="0dp"
             app:strokeColor="@color/divider"
             app:strokeWidth="1dp">
@@ -344,13 +407,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/report_trend"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/gap_s"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -363,7 +426,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="@dimen/gap_xs"
                         android:text="支出"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
@@ -378,7 +441,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="@dimen/gap_xs"
                         android:text="收入"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
@@ -397,8 +460,8 @@
             android:id="@+id/topMerchantCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="@dimen/gap_m"
+            app:cardCornerRadius="@dimen/card_radius"
             app:cardElevation="0dp"
             app:strokeColor="@color/divider"
             app:strokeWidth="1dp">
@@ -414,14 +477,14 @@
                     android:layout_height="wrap_content"
                     android:text="花钱最多的对象"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/merchantContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/gap_s"
                     android:orientation="vertical" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

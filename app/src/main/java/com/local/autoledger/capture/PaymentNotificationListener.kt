@@ -35,22 +35,36 @@ class PaymentNotificationListener : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         if (sbn == null) return
+
+        // 打点必须放在包名过滤之前：别的应用的通知同样证明链路是活的。
+        // 只统计支付通知的话，半天没花钱就会被误判成「监听挂了」。
+        NotifyLink.markNotify()
+
         val pkg = sbn.packageName ?: return
         if (pkg != PaymentParser.PKG_WECHAT && pkg != PaymentParser.PKG_ALIPAY) return
         if (!Prefs.captureEnabled) return
 
-        val extras = sbn.notification?.extras ?: return
-        val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString().orEmpty()
-        val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString().orEmpty()
-        val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString().orEmpty()
-        val lines = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
+        val notif = sbn.notification ?: return
+        val extras = notif.extras
+        val title = extras?.getCharSequence(Notification.EXTRA_TITLE)?.toString().orEmpty()
+        val text = extras?.getCharSequence(Notification.EXTRA_TEXT)?.toString().orEmpty()
+        val bigText = extras?.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString().orEmpty()
+        val lines = extras?.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
             ?.joinToString(" ") { it?.toString().orEmpty() }.orEmpty()
-        val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString().orEmpty()
+        val subText = extras?.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString().orEmpty()
+        val titleBig = extras?.getCharSequence(Notification.EXTRA_TITLE_BIG)?.toString().orEmpty()
+        val summary = extras?.getCharSequence(Notification.EXTRA_SUMMARY_TEXT)?.toString().orEmpty()
+        val info = extras?.getCharSequence(Notification.EXTRA_INFO_TEXT)?.toString().orEmpty()
+
+        // tickerText 不能漏：支付宝有一类通知正文只写在 tickerText 里，
+        // 标题和正文都是空的。少了这一行，那些支付会被当成「空通知」静默丢掉，
+        // 连「未识别」日志都不留，真机上根本查不出为什么漏记。
+        val ticker = notif.tickerText?.toString().orEmpty()
 
         // distinct() 不能省：BigTextStyle 会把同一段正文同时塞进 EXTRA_TEXT 和 EXTRA_BIG_TEXT，
         // 直接拼接会让原文重复两三遍，落库的 raw_text 就不干净了
         // （字段本身重复对解析无害，但判重和日志都是拿原文比的，越干净越好）。
-        val combined = listOf(title, text, bigText, lines, subText)
+        val combined = listOf(title, titleBig, text, bigText, lines, subText, summary, info, ticker)
             .filter { it.isNotBlank() }
             .distinct()
             .joinToString(" ")
@@ -102,16 +116,27 @@ class PaymentNotificationListener : NotificationListenerService() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        NotifyLink.seed()
+    }
+
     override fun onListenerConnected() {
         super.onListenerConnected()
+        NotifyLink.connected = true
+        NotifyLink.seed()
         CaptureLog.add("状态", "通知使用权已连接，自动记账就绪")
         Log.i(TAG, "通知使用权已连接，自动记账已就绪")
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
-        CaptureLog.add("状态", "通知使用权已断开")
+        NotifyLink.connected = false
+        CaptureLog.add("状态", "通知使用权已断开，正在重新连接")
         Log.i(TAG, "通知使用权已断开")
+        // 断开是系统主动通知的，说明绑定确实没了。这里只做便宜的 rebind，
+        // 让系统立刻重新绑一次；真正连不上时由 NotifyLink.watchdog 走强制重连。
+        NotifyLink.rebind(this)
     }
 
     override fun onDestroy() {

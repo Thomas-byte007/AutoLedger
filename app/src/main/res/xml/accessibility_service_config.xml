@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  无障碍服务配置。
+
+  几个属性的来由（都是踩过才加的）：
+    · flagRetrieveInteractiveWindows —— 想拿 windows / 跨窗口内容就必须有它，
+      否则部分版本上 rootInActiveWindow 会在切窗口的空档返回 null；
+    · flagIncludeNotImportantViews   —— 支付成功页上的金额常被标成 not important，
+      不加这条会漏掉关键文本；
+    · settingsActivity               —— 系统无障碍设置页里会多一个齿轮入口，
+      用户重新授权的点击路径短一大截（开关被系统关掉时要靠它把人送回来）；
+    · typeWindowsChanged             —— 补一层窗口变化的感知，比只靠 content 稳。
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeWindowsChanged|typeNotificationStateChanged"
+    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canRequestFilterKeyEvents="false"
+    android:canRequestTouchExplorationMode="false"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_desc"
+    android:notificationTimeout="300"
+    android:packageNames="com.tencent.mm,com.eg.android.AlipayGphone"
+    android:settingsActivity=".ui.MainActivity"
+    android:summary="在微信 / 支付宝的支付成功页读取金额，补齐没弹通知的那一笔"
+    tools:targetApi="29" />

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  启动器图标 · 单色层（Android 13+ 「主题图标」用）
+  系统会把整张图刷成同一颜色、只认 alpha，所以这里改成纯描边版：
+  卡片轮廓 + ¥ + 金币轮廓；几何与彩色前景层大致对齐（卡片略小一圈）。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:pathData="M44,29h20a12,12 0 0 1 12,12v26a12,12 0 0 1 -12,12h-20a12,12 0 0 1 -12,-12v-26a12,12 0 0 1 12,-12z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="4.4"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:pathData="M41,66h10M41,73h9"
+        android:strokeColor="#FF000000"
+        android:strokeAlpha="0.75"
+        android:strokeWidth="3.4"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M39,38L49.5,48.5M60,38L49.5,48.5M49.5,48.5L49.5,60"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="4.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M39,52.5h21M39,56.5h19"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="4"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M57,66a7,7 0 1 0 14,0a7,7 0 1 0 -14,0"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="3.6"
+        android:strokeLineJoin="round" />
+</vector>

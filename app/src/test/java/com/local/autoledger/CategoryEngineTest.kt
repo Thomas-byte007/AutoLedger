@@ -91,6 +91,30 @@ class CategoryEngineTest {
     }
 
     @Test
+    fun `同长度关键词优先取在串里出现更靠前的那个`() {
+        // 「出行」和「滴滴」都是两个字。商户名一般以品牌打头，
+        // 所以「滴滴出行」应该落到「打车」，而不是泛泛的「交通」
+        val engine = CategoryEngine(
+            listOf(
+                Rule(keyword = "出行", categoryKey = "transport", direction = Direction.EXPENSE, priority = 20),
+                Rule(keyword = "滴滴", categoryKey = "taxi", direction = Direction.EXPENSE, priority = 20),
+            )
+        )
+        assertEquals("taxi", engine.classify(Direction.EXPENSE, "滴滴出行", "").categoryKey)
+        assertEquals("transport", engine.classify(Direction.EXPENSE, "出行记录", "").categoryKey)
+    }
+
+    @Test
+    fun `内置规则把常见消费落到二级类`() {
+        val engine = CategoryEngine(Categories.builtinRules())
+        assertEquals("taxi", engine.classify(Direction.EXPENSE, "滴滴出行", "").categoryKey)
+        assertEquals("travel", engine.classify(Direction.EXPENSE, "携程酒店", "").categoryKey)
+        assertEquals("snack", engine.classify(Direction.EXPENSE, "零食很忙", "").categoryKey)
+        assertEquals("phone", engine.classify(Direction.EXPENSE, "中国移动话费", "").categoryKey)
+        assertEquals("fuel", engine.classify(Direction.EXPENSE, "中国石化加油", "").categoryKey)
+    }
+
+    @Test
     fun `每个实义分类都有内置关键词`() {
         // 防止有人加了分类却忘了补关键词种子；兜底的「其他」不在此列
         val rules = Categories.builtinRules()

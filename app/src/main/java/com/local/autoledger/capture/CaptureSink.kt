@@ -74,7 +74,7 @@ object CaptureSink {
             if (mgr.getNotificationChannel(CHANNEL_ID) == null) {
                 val ch = NotificationChannel(
                     CHANNEL_ID,
-                    "自动记账提醒",
+                    "记账提醒",
                     NotificationManager.IMPORTANCE_LOW
                 ).apply { description = "自动记录一笔账目后的轻提示" }
                 mgr.createNotificationChannel(ch)

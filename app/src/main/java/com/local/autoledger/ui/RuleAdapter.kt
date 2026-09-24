@@ -30,8 +30,11 @@ class RuleAdapter(private val onDelete: (Rule) -> Unit) :
         fun bind(rule: Rule) {
             val ctx = b.root.context
             val cat = Categories.byKey(rule.categoryKey, rule.direction)
-            b.tvIcon.text = cat.emoji
-            b.tvIcon.backgroundTintList =
+            b.ivIcon.setImageResource(cat.iconRes)
+            b.ivIcon.imageTintList = ColorStateList.valueOf(
+                ThemeUtil.color(ctx, cat.colorRes)
+            )
+            b.iconBg.backgroundTintList =
                 ColorStateList.valueOf(ThemeUtil.soft(ctx, ThemeUtil.color(ctx, cat.colorRes)))
             b.tvKeyword.text = rule.keyword
             b.tvSub.text = buildString {

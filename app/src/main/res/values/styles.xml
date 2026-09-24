@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      数字键盘上的一个键。GridLayout 的 0dp + 行列权重会把格子平均撑开，
+      外层容器给了确定的高度（252dp），所以每格稳稳落在 58dp 上下，够得上 48dp 的最小点击区。
+    -->
+    <style name="KeypadKey">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_rowWeight">1</item>
+        <item name="android:layout_gravity">fill</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:background">@drawable/bg_keypad_key_ripple</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <!-- 列表 / 设置行之间的分隔线：从图标右侧起画，比通栏轻 -->
+    <style name="DividerRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">68dp</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+
+    <!-- 分类选择页里「一级类」小标题 -->
+    <style name="PickerSectionTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- 记一笔顶部的 支出 / 收入 分段文字 -->
+    <style name="EntryTabText" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- 报表「支出分布」里的一级类名称 -->
+    <style name="DistRowName">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+</resources>

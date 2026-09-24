@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ===== 页面 / 卡片 ===== -->
     <dimen name="page_padding">16dp</dimen>
     <dimen name="card_padding">16dp</dimen>
     <dimen name="card_radius">20dp</dimen>
-    <dimen name="gap_s">6dp</dimen>
+    <dimen name="card_radius_lg">24dp</dimen>
+
+    <!-- ===== 节奏间距(8 的整数倍,Material) ===== -->
+    <dimen name="gap_xxs">2dp</dimen>
+    <dimen name="gap_xs">4dp</dimen>
+    <dimen name="gap_s">8dp</dimen>
     <dimen name="gap_m">12dp</dimen>
-    <dimen name="gap_l">20dp</dimen>
+    <dimen name="gap_l">16dp</dimen>
+    <dimen name="gap_xl">20dp</dimen>
+    <dimen name="gap_xxl">24dp</dimen>
+
+    <!-- 兼容旧命名(以前 layout 里直接用了名字,先保留) -->
+    <dimen name="page_padding_old">6dp</dimen>
+
+    <!-- ===== 组件尺寸 ===== -->
     <dimen name="icon_badge">44dp</dimen>
+    <dimen name="icon_badge_sm">40dp</dimen>
+    <dimen name="icon_md">24dp</dimen>
+    <dimen name="touch_min">48dp</dimen>
+    <dimen name="row_height">56dp</dimen>
+    <dimen name="row_height_lg">64dp</dimen>
+    <dimen name="hero_month_btn">44dp</dimen>
+
+    <!-- ===== 列表项 / 行 ===== -->
+    <dimen name="list_item_height">64dp</dimen>
+    <dimen name="list_item_height_compact">56dp</dimen>
+
+    <!-- 大屏上正文的最大宽度：0dp 表示不限宽（手机），平板 / 折叠屏在 sw600dp 里覆盖 -->
+    <dimen name="content_max_width">0dp</dimen>
+
+    <!-- ===== 文本 ===== -->
+    <dimen name="text_caption">11sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_subtitle">15sp</dimen>
+    <dimen name="text_title">16sp</dimen>
+    <dimen name="text_title_lg">18sp</dimen>
+    <dimen name="text_amount">16sp</dimen>
+    <dimen name="text_hero">30sp</dimen>
 </resources>

@@ -15,15 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp">
+            android:paddingStart="@dimen/page_padding"
+            android:paddingTop="@dimen/gap_m"
+            android:paddingEnd="@dimen/page_padding">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="24dp"
+                app:cardCornerRadius="@dimen/card_radius_lg"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp">
 
@@ -45,30 +45,29 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="2026年9月"
                             android:textColor="#DCE6FF"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
                         <ImageButton
                             android:id="@+id/btnPrevMonth"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="@dimen/hero_month_btn"
+                            android:layout_height="@dimen/hero_month_btn"
                             android:background="@drawable/bg_pill_translucent"
                             android:contentDescription="上个月"
-                            android:padding="6dp"
+                            android:padding="10dp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_arrow_left"
                             app:tint="#FFFFFF" />
 
                         <ImageButton
                             android:id="@+id/btnNextMonth"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginStart="8dp"
+                            android:layout_width="@dimen/hero_month_btn"
+                            android:layout_height="@dimen/hero_month_btn"
+                            android:layout_marginStart="@dimen/gap_s"
                             android:background="@drawable/bg_pill_translucent"
                             android:contentDescription="下个月"
-                            android:padding="6dp"
+                            android:padding="10dp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_arrow_right"
                             app:tint="#FFFFFF" />
@@ -77,7 +76,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/gap_l"
                         android:alpha="0.85"
                         android:text="本月支出"
                         android:textColor="#FFFFFF"
@@ -90,12 +89,13 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="¥0.00"
                         android:textColor="#FFFFFF"
-                        android:textSize="34sp" />
+                        android:textSize="@dimen/text_hero"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="@dimen/gap_xl"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -104,9 +104,9 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_pill_translucent"
                             android:orientation="vertical"
-                            android:paddingStart="14dp"
+                            android:paddingStart="@dimen/gap_l"
                             android:paddingTop="10dp"
-                            android:paddingEnd="14dp"
+                            android:paddingEnd="@dimen/gap_l"
                             android:paddingBottom="10dp">
 
                             <TextView
@@ -125,7 +125,8 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="¥0.00"
                                 android:textColor="#FFFFFF"
-                                android:textSize="15sp" />
+                                android:textSize="@dimen/text_subtitle"
+                                android:textStyle="bold" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -135,9 +136,9 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_pill_translucent"
                             android:orientation="vertical"
-                            android:paddingStart="14dp"
+                            android:paddingStart="@dimen/gap_l"
                             android:paddingTop="10dp"
-                            android:paddingEnd="14dp"
+                            android:paddingEnd="@dimen/gap_l"
                             android:paddingBottom="10dp">
 
                             <TextView
@@ -156,7 +157,8 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="¥0.00"
                                 android:textColor="#FFFFFF"
-                                android:textSize="15sp" />
+                                android:textSize="@dimen/text_subtitle"
+                                android:textStyle="bold" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -166,11 +168,11 @@
                 android:id="@+id/captureBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/gap_m"
                 android:background="@drawable/bg_banner"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="14dp"
+                android:paddingStart="@dimen/gap_l"
                 android:paddingTop="10dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="10dp"
@@ -190,10 +192,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_pill_solid"
                     android:paddingStart="12dp"
-                    android:paddingTop="6dp"
+                    android:paddingTop="@dimen/gap_s"
                     android:paddingEnd="12dp"
-                    android:paddingBottom="6dp"
-                    android:text="去开启"
+                    android:paddingBottom="@dimen/gap_s"
+                    android:text="@string/action_grant"
                     android:textColor="@color/badge_pending_text"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -202,14 +204,14 @@
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/gap_m"
                 android:scrollbars="none">
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:chipSpacingHorizontal="8dp"
+                    app:chipSpacingHorizontal="@dimen/gap_s"
                     app:selectionRequired="true"
                     app:singleLine="true"
                     app:singleSelection="true" />
@@ -228,9 +230,9 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:overScrollMode="never"
-                android:paddingStart="16dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="16dp"
+                android:paddingStart="@dimen/page_padding"
+                android:paddingTop="@dimen/gap_xs"
+                android:paddingEnd="@dimen/page_padding"
                 android:paddingBottom="96dp"
                 android:scrollbars="none" />
 
@@ -245,27 +247,27 @@
                 android:paddingEnd="40dp"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🧾"
-                    android:textSize="44sp" />
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_empty_inbox" />
 
                 <TextView
                     android:id="@+id/tvEmptyTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="@dimen/gap_m"
                     android:text="@string/empty_title"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_title"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvEmptyDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/gap_s"
                     android:gravity="center"
                     android:lineSpacingExtra="4dp"
                     android:text="@string/empty_desc"

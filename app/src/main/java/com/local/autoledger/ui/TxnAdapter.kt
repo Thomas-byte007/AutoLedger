@@ -1,11 +1,11 @@
 package com.local.autoledger.ui
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.local.autoledger.data.Accounts
 import com.local.autoledger.data.Categories
 import com.local.autoledger.data.Direction
 import com.local.autoledger.data.Money
@@ -91,20 +91,17 @@ class TxnAdapter(private val onClick: (Txn) -> Unit) :
             val ctx = b.root.context
             val cat = Categories.byKey(txn.categoryKey, txn.direction)
 
-            b.tvIcon.text = cat.emoji
-            b.tvIcon.backgroundTintList =
-                ColorStateList.valueOf(
-                    ThemeUtil.soft(ctx, ThemeUtil.color(ctx, cat.colorRes))
-                )
+            CategoryIcons.bind(b.iconBg, b.ivIcon, cat)
 
-            b.tvTitle.text = txn.merchant.ifBlank { txn.channel.label }
+            // 类别是主角（参考主流记账 App）：标题放分类名，商户 / 账户 / 来源弱化进副标题
+            b.tvTitle.text = cat.label
 
-            val sub = buildString {
-                append(cat.label)
-                if (txn.payMethod.isNotBlank()) append(" · ").append(txn.payMethod)
-                if (txn.merchant.isNotBlank()) append(" · ").append(txn.channel.short)
-            }
-            b.tvSub.text = sub
+            val sub = listOf(
+                if (txn.payMethod.isNotBlank()) Accounts.labelOf(txn.payMethod) else "",
+                txn.merchant,
+                if (txn.merchant.isNotBlank()) txn.channel.short else ""
+            ).filter { it.isNotBlank() }.joinToString(" · ")
+            b.tvSub.text = sub.ifBlank { txn.channel.label }
 
             b.tvBadge.isVisible = txn.isPending
 

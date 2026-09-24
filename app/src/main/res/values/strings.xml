@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">自动记账</string>
-    <string name="notification_listener_label">支付通知自动记账</string>
+    <string name="app_name">随手记</string>
+    <string name="notification_listener_label">支付通知记账</string>
 
     <string name="tab_detail">明细</string>
     <string name="tab_report">报表</string>
@@ -15,7 +15,7 @@
     <string name="yesterday">昨天</string>
 
     <string name="empty_title">本月还没有记录</string>
-    <string name="empty_desc">开启「支付通知自动记账」后，微信和支付宝的付款会自动出现在这里；也可以点击右下角手动记一笔。</string>
+    <string name="empty_desc">开启「支付通知记账」后，微信和支付宝的付款会自动出现在这里；也可以点击右下角手动记一笔。</string>
 
     <string name="filter_all">全部</string>
 
@@ -26,9 +26,31 @@
     <string name="report_category_rank">分类占比</string>
     <string name="report_trend">近 6 个月趋势</string>
 
-    <string name="settings_auto_capture">自动记账</string>
+    <string name="settings_auto_capture">随手记</string>
     <string name="settings_notification_access">读取支付通知</string>
-    <string name="settings_sms_access">读取银行短信</string>
+
+    <string name="accessibility_service_label">随手记 · 辅助记账</string>
+    <string name="accessibility_desc">只在微信、支付宝的「支付成功」页面读取金额，用于自动记账。不读取聊天内容、不读取密码输入框，所有数据仅保存在本机。</string>
+    <string name="access_title">辅助记账（读支付结果页）</string>
+    <string name="access_sub">支付没弹通知时也能记账，需要在系统「无障碍」中开启</string>
+    <string name="access_on">辅助记账已开启</string>
+    <string name="access_off">辅助记账已关闭</string>
+
+    <!-- 启动引导弹窗：系统无障碍服务没开时提示一次 -->
+    <string name="access_prompt_title">开启「辅助记账」</string>
+    <string name="access_prompt_body">有些付款不会弹通知，光看通知会漏记一笔。开启后，随手记只在微信、支付宝的「支付成功」页面读取金额，自动把这一笔记上。\n\n不读聊天内容、不读密码框，数据只保存在本机。</string>
+    <string name="access_prompt_path_label">小米手机开启路径</string>
+    <string name="access_prompt_path">设置 → 无障碍功能 → 已安装的服务 → 随手记 → 打开开关并确认</string>
+    <string name="access_prompt_ok">确定</string>
+    <string name="access_prompt_cancel">取消</string>
+    <string name="access_prompt_done">辅助记账已开启，没弹通知的那一笔也会记下来</string>
+    <string name="battery_title">省电策略放行</string>
+    <string name="battery_sub">避免系统休眠后台后收不到支付通知</string>
+    <string name="battery_ok">已放行</string>
+    <string name="battery_todo">未放行</string>
+    <string name="battery_bg_restricted">后台受限</string>
+    <string name="relink_title">重新连接通知监听</string>
+    <string name="relink_done">已重新连接，下一次付款就能试出来了</string>
     <string name="settings_rules">分类规则</string>
     <string name="settings_import">导入微信/支付宝账单</string>
     <string name="settings_export">导出账本数据</string>
@@ -38,4 +60,152 @@
     <string name="action_granted">已开启</string>
     <string name="action_grant">去开启</string>
     <string name="action_close">关闭</string>
+    <string name="action_save">保存</string>
+    <string name="action_now">改成现在</string>
+    <string name="action_delete_record">删除这条记录</string>
+
+    <!-- ===== 记一笔 ===== -->
+    <string name="quick_entry_title">记一笔</string>
+    <string name="edit_entry_title">编辑记录</string>
+    <string name="currency_symbol">¥</string>
+    <string name="field_category">分类</string>
+    <string name="field_account">账户</string>
+    <string name="field_time">时间</string>
+    <string name="field_merchant">对方</string>
+    <string name="field_merchant_hint">选填，如：星巴克</string>
+    <string name="field_note">备注</string>
+    <string name="field_note_hint">选填</string>
+    <string name="remember_merchant">记住这个商户，下次自动归入该分类</string>
+    <string name="keypad_backspace">退格</string>
+    <string name="keypad_minus">金额减一元</string>
+    <string name="keypad_plus">金额加一元</string>
+    <string name="keypad_confirm">确定</string>
+    <string name="toast_need_amount">请先输入金额</string>
+    <string name="toast_saved">已保存</string>
+    <string name="toast_deleted">已删除</string>
+    <string name="toast_gone">这条记录已经不在了</string>
+    <string name="amount_placeholder">0.00</string>
+
+    <!-- ===== 分类选择 ===== -->
+    <string name="picker_title">选择分类</string>
+    <string name="picker_search_hint">搜索分类</string>
+    <string name="picker_recent">最近使用</string>
+    <string name="picker_add">添加分类</string>
+    <string name="picker_add_title">新建分类</string>
+    <string name="picker_add_name_hint">分类名，如「咖啡」</string>
+    <string name="picker_add_group">归属一级类</string>
+    <string name="picker_add_icon">图标</string>
+    <string name="picker_add_color">颜色</string>
+    <string name="picker_add_empty_name">请先填一个分类名</string>
+    <string name="picker_add_ok">创建</string>
+    <string name="picker_delete_title">删除「%s」？</string>
+    <string name="picker_delete_msg">这个分类下的账目会改挂到「其他」，记录不会丢。</string>
+
+    <!-- ===== 账单周期选择面板（月 / 年） ===== -->
+    <string name="picker_period_title">选择时间</string>
+    <string name="picker_period_month">月</string>
+    <string name="picker_period_year">年</string>
+    <string name="picker_period_this_month">本月</string>
+    <string name="picker_period_prev_year">上一年</string>
+    <string name="picker_period_next_year">下一年</string>
+
+    <!-- ===== 分类管理 ===== -->
+    <string name="manage_title">分类管理</string>
+    <string name="manage_sub">改名字、换图标、挪位置、删除，一级类和二级类都能改</string>
+    <string name="manage_builtin">内置</string>
+    <string name="manage_custom">自建</string>
+    <string name="manage_group_tag">一级类</string>
+    <string name="manage_add_sub">+ 子类</string>
+    <string name="manage_empty">这个方向还没有分类，点上面的「新建分类」加一个</string>
+    <string name="manage_restore">恢复内置</string>
+    <string name="manage_restore_title">恢复内置分类？</string>
+    <string name="manage_restore_msg">会还原你对内置分类做过的改名 / 换色 / 删除，你自己新建的分类保留。</string>
+    <string name="manage_restore_done">已恢复 %d 处内置分类</string>
+    <string name="manage_nothing_to_restore">内置分类没有改动</string>
+    <string name="manage_delete_group_title">删除一级类「%s」？</string>
+    <string name="manage_delete_group_msg">它下面的二级类会整体挪到「%s」，账目一条都不会丢。</string>
+    <string name="manage_group_deleted">已删除一级类</string>
+    <string name="manage_cannot_delete">这是兜底分类，删不了</string>
+    <string name="manage_txn_count">%d 笔</string>
+
+    <string name="editor_edit_title">编辑分类</string>
+    <string name="editor_edit_group_title">编辑一级类</string>
+    <string name="editor_action_edit">编辑分类</string>
+    <string name="editor_action_delete">删除分类</string>
+    <string name="editor_duplicate_or_invalid">没改成功，可能已经有同名分类了</string>
+    <string name="editor_done">已保存「%s」</string>
+
+    <!-- ===== 年度账单 ===== -->
+    <string name="year_report_title">年度账单</string>
+    <string name="year_report_entry">年度账单</string>
+    <string name="year_report_entry_sub">全年收支、月度走势与分类占比</string>
+    <string name="year_total_expense">全年支出</string>
+    <string name="year_empty">这一年还没有记录</string>
+    <string name="year_empty_desc">换一个年份看看，或者往这个年份里补几笔记账。</string>
+    <string name="year_months">月度走势</string>
+    <string name="year_average">月均支出</string>
+    <string name="year_active_days">记账天数</string>
+    <string name="year_month_count">有账月份</string>
+    <string name="year_max_txn">最大单笔</string>
+    <string name="year_busiest_month">花得最多的月份</string>
+    <string name="year_compare_first">这是第一年有记录</string>
+    <string name="year_view_month_detail">看这个月</string>
+
+    <!-- ===== 后台常驻 ===== -->
+    <!-- ===== 我的 ===== -->
+    <string name="mine_metric_total">累计记账</string>
+    <string name="mine_metric_month">本月支出</string>
+    <string name="mine_metric_pending">待分类</string>
+    <string name="mine_count_records">%d 笔</string>
+    <string name="mine_version">随手记 v%1$s\n数据全部保存在本机，不联网</string>
+
+    <string name="fold_title_reliable">稳定运行</string>
+    <string name="fold_title_more">更多</string>
+    <string name="fold_items_on">%d 项已开</string>
+    <string name="fold_collapsed">%d 项</string>
+    <string name="cd_expand_section">展开 %1$s，共 %2$d 项</string>
+    <string name="cd_collapse_section">收起 %1$s</string>
+
+    <string name="tile_categories">分类管理</string>
+    <string name="tile_categories_sub">%d 个分类</string>
+    <string name="tile_rules">分类规则</string>
+    <string name="tile_rules_sub">%d 条关键词</string>
+    <string name="tile_import">导入账单</string>
+    <string name="tile_import_sub">微信 / 支付宝 CSV</string>
+    <string name="tile_export">导出备份</string>
+    <string name="tile_export_sub">存一份 CSV 到手机</string>
+
+    <string name="row_capture_title">读取支付通知</string>
+    <string name="row_capture_sub">从微信 / 支付宝的付款通知自动记账</string>
+    <string name="row_stats_title">数据概览</string>
+    <string name="row_stats_sub">记录条数、时间范围与占用空间</string>
+    <string name="row_log_title">采集日志</string>
+    <string name="row_log_sub">看看每条付款通知有没有被识别</string>
+    <string name="row_notify_access_title">通知使用权设置</string>
+    <string name="row_notify_access_sub">在系统设置里手动开关</string>
+    <string name="row_privacy_sub">不联网，数据只在本机</string>
+    <string name="row_clear_title">清空全部数据</string>
+    <string name="row_clear_sub">删除本机所有账目，不可恢复</string>
+
+    <string name="keepalive_title">后台常驻运行</string>
+    <string name="keepalive_sub">在通知栏常驻一条入口，清理后台也能继续自动记账</string>
+    <string name="keepalive_notify_title">随手记正在运行</string>
+    <string name="keepalive_notify_text">%1$s · 今天已支出 %2$s</string>
+    <string name="keepalive_notify_idle">等待记账中，点一下打开账本</string>
+    <string name="keepalive_channel">后台运行</string>
+    <string name="keepalive_action_stop">停止后台</string>
+    <string name="keepalive_on">后台常驻已开启，通知栏会留一条入口</string>
+    <string name="keepalive_off">后台常驻已关闭，App 退到后台后可能被系统回收</string>
+
+    <!-- ===== 报表 ===== -->
+    <string name="report_income_source">收入来源</string>
+    <string name="report_expense_dist">支出分布</string>
+    <string name="report_dist_hint">点击分类查看二级分类与交易明细</string>
+    <string name="report_detail_title">%s · 明细</string>
+    <string name="count_label">记账笔数</string>
+
+    <!-- ===== 一级类下钻页 ===== -->
+    <string name="breakdown_leaf_title">二级分类</string>
+    <string name="breakdown_txn_title">交易明细</string>
+    <string name="breakdown_empty">这个区间还没有该分类的账目</string>
 </resources>

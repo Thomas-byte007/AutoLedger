@@ -47,7 +47,19 @@ $ErrorActionPreference = "Stop"
 # ----------------------------------------------------------------- 基础环境
 
 $Root = Split-Path -Parent $PSScriptRoot
-$BuildRoot = Join-Path (Split-Path -Parent $Root) "AutoLedger-build"
+
+# 仓库路径是纯 ASCII 时，Gradle 用默认的 <模块>/build；
+# 路径含中文时根 build.gradle.kts 会把 build 目录搬到同级的 AutoLedger-build。
+# 这里必须跟着同一套规则走，否则永远找不到 APK。
+if ($Root -match '^[\x20-\x7E]+$') {
+    $AppBuild = Join-Path $Root "app\build"
+    $SimBuild = Join-Path $Root "paysim\build"
+    $BuildRoot = $Root
+} else {
+    $BuildRoot = Join-Path (Split-Path -Parent $Root) "AutoLedger-build"
+    $AppBuild = Join-Path $BuildRoot "app"
+    $SimBuild = Join-Path $BuildRoot "paysim"
+}
 if (-not $OutDir) { $OutDir = Join-Path $Root "dist\emulator-e2e" }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 Remove-Item -LiteralPath (Join-Path $OutDir "progress.log") -Force -ErrorAction SilentlyContinue
@@ -290,6 +302,42 @@ function Find-Node($doc, [string]$ResourceIdSuffix, [string]$Text) {
     return $null
 }
 
+# uiautomator 的 dump 只有「当前屏幕上看得见」的节点。表单类页面内容一长，
+# 靠下的控件（比如编辑页的删除按钮）就查不到 —— 和真人一样先滚下去再找。
+function Scroll-Down([int]$Times = 1) {
+    $size = Invoke-Adb @("shell", "wm", "size") -AllowFail
+    if ($size -notmatch "(\d+)x(\d+)") { return }
+    $cx = [int]([int]$Matches[1] / 2)
+    $from = [int]([int]$Matches[2] * 0.72)
+    $to = [int]([int]$Matches[2] * 0.28)
+    for ($i = 0; $i -lt $Times; $i++) {
+        Invoke-Adb @("shell", "input", "swipe", "$cx", "$from", "$cx", "$to", "300") -AllowFail | Out-Null
+        Start-Sleep -Milliseconds 700
+    }
+}
+
+function Find-NodeScrolling($doc, [string]$ResourceIdSuffix, [int]$MaxScrolls = 4) {
+    $hit = Find-Node $doc $ResourceIdSuffix $null
+    if ($hit) { return $hit }
+    for ($i = 0; $i -lt $MaxScrolls; $i++) {
+        Scroll-Down
+        $hit = Find-Node (Get-Ui) $ResourceIdSuffix $null
+        if ($hit) { return $hit }
+    }
+    return $null
+}
+
+function Find-TextScrolling($doc, [string]$Text, [int]$MaxScrolls = 4) {
+    $hit = Find-Node $doc $null $Text
+    if ($hit) { return $hit }
+    for ($i = 0; $i -lt $MaxScrolls; $i++) {
+        Scroll-Down
+        $hit = Find-Node (Get-Ui) $null $Text
+        if ($hit) { return $hit }
+    }
+    return $null
+}
+
 function Tap-Node($node) {
     if (-not $node) { return $false }
     $b = $node.GetAttribute("bounds")
@@ -302,10 +350,7 @@ function Tap-Node($node) {
 
 function Grant-AppRuntimePerms {
     # pm clear 会把运行时授权一起打回未授权
-    foreach ($perm in @(
-            "android.permission.POST_NOTIFICATIONS",
-            "android.permission.READ_SMS",
-            "android.permission.RECEIVE_SMS")) {
+    foreach ($perm in @("android.permission.POST_NOTIFICATIONS")) {
         Invoke-Adb @("shell", "pm", "grant", $AppPkg, $perm) -AllowFail | Out-Null
     }
 }
@@ -359,9 +404,9 @@ if (-not $SkipBuild) {
     Section "1/7 构建 APK（已跳过）"
 }
 
-$appApk = Join-Path $BuildRoot "app\outputs\apk\debug\app-debug.apk"
-$wechatApk = Join-Path $BuildRoot "paysim\outputs\apk\wechat\debug\paysim-wechat-debug.apk"
-$alipayApk = Join-Path $BuildRoot "paysim\outputs\apk\alipay\debug\paysim-alipay-debug.apk"
+$appApk = Join-Path $AppBuild "outputs\apk\debug\app-debug.apk"
+$wechatApk = Join-Path $SimBuild "outputs\apk\wechat\debug\paysim-wechat-debug.apk"
+$alipayApk = Join-Path $SimBuild "outputs\apk\alipay\debug\paysim-alipay-debug.apk"
 foreach ($p in @($appApk, $wechatApk, $alipayApk)) {
     Check ("找到 " + (Split-Path $p -Leaf)) (Test-Path $p) $p
 }
@@ -479,7 +524,7 @@ Check "点击后进入了编辑页" ($top -match "EditTransaction") ("当前前�
 
 Step "点删除，并在确认框上确认"
 $ui2 = Get-Ui
-$btn = Find-Node $ui2 "btnDelete" $null
+$btn = Find-NodeScrolling $ui2 "btnDelete"
 Check "编辑页上有删除按钮（且记录已加载出来）" ($btn -ne $null)
 Tap-Node $btn | Out-Null
 Start-Sleep -Seconds 2
@@ -515,8 +560,12 @@ Step "进「我的」→「采集日志」"
 $ui = Get-Ui
 Tap-Node (Find-Node $ui $null "我的") | Out-Null
 Start-Sleep -Seconds 2
+# 「采集日志」收在「更多」折叠区里，先展开那一段
 $ui = Get-Ui
-$row = Find-Node $ui $null "采集日志"
+Tap-Node (Find-Node $ui $null "更多") | Out-Null
+Start-Sleep -Seconds 1
+$ui = Get-Ui
+$row = Find-TextScrolling $ui "采集日志"
 if ($row) {
     Tap-Node $row | Out-Null
     Start-Sleep -Seconds 2

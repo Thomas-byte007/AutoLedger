@@ -34,6 +34,36 @@
     <color name="cat_refund">#22C55E</color>
     <color name="cat_other_income">#0EA5E9</color>
 
+    <!-- ===== 二级类补充色（一级类沿用上面的主色） ===== -->
+    <color name="cat_snack">#FB923C</color>
+    <color name="cat_drink">#F472B6</color>
+    <color name="cat_fruit">#84CC16</color>
+    <color name="cat_dinner">#EA580C</color>
+    <color name="cat_taxi">#38BDF8</color>
+    <color name="cat_fuel">#F59E0B</color>
+    <color name="cat_parking">#818CF8</color>
+    <color name="cat_clothing">#DB2777</color>
+    <color name="cat_appliance">#7C3AED</color>
+    <color name="cat_express">#A16207</color>
+    <color name="cat_digital">#2563EB</color>
+    <color name="cat_beauty">#EC6BA8</color>
+    <color name="cat_stationery">#4F46E5</color>
+    <color name="cat_exam">#0891B2</color>
+    <color name="cat_rent">#9333EA</color>
+    <color name="cat_utility">#EAB308</color>
+    <color name="cat_furniture">#A855F7</color>
+    <color name="cat_medicine">#DC2626</color>
+    <color name="cat_checkup">#F43F5E</color>
+    <color name="cat_comm">#0284C7</color>
+    <color name="cat_broadband">#22D3EE</color>
+    <color name="cat_fitness">#22C55E</color>
+    <color name="cat_media">#C026D3</color>
+    <color name="cat_game">#F97316</color>
+    <color name="cat_gift">#D946EF</color>
+    <color name="cat_pet">#D97706</color>
+    <color name="cat_bonus">#CA8A04</color>
+    <color name="cat_redpacket">#E11D48</color>
+
     <color name="wave_a">#3B6CF6</color>
     <color name="wave_b">#F0544F</color>
 

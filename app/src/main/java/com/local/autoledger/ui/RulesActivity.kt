@@ -68,7 +68,7 @@ class RulesActivity : AppCompatActivity() {
     private fun chooseCategory(keyword: String) {
         val all = Categories.ALL
         val labels = all.map {
-            "${it.emoji}  ${it.label}（${if (it.direction == Direction.EXPENSE) "支出" else "收入"}）"
+            "${it.label}（${if (it.direction == Direction.EXPENSE) "支出" else "收入"}）"
         }.toTypedArray()
 
         MaterialAlertDialogBuilder(this)

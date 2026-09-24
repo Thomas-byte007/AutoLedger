@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 教育培训（由 tools/gen_cat_icons.py 生成，改图标请改脚本后重跑） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12 6.6C10.4 5.2 8.2 4.6 5 4.6a1 1 0 0 0-1 1v10.6a1 1 0 0 0 1 1c3 0 5.2.5 7 1.9 1.8-1.4 4-1.9 7-1.9a1 1 0 0 0 1-1V5.6a1 1 0 0 0-1-1c-3.2 0-5.4.6-7 2z"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M12 6.6v12.5"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

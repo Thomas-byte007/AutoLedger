@@ -1,21 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  启动器图标 · 前景层（108dp，关键内容收在中心 66dp 安全圆内）
+  语义：一张账单卡片 + 卡面上的 ¥ + 两条账目行 + 右下角一枚金币 = 「随手记一笔钱」。
+  描边统一 4.0~4.6、圆头圆角，与 App 内的线性图标同源。
+  改完请跑 tools/preview_launcher_icon.py 看不同裁形下有没有被切。
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- 账本 -->
+
+    <!-- 账单卡片 -->
     <path
-        android:pathData="M36,30 h36 a6,6 0 0 1 6,6 v36 a6,6 0 0 1 -6,6 h-36 a6,6 0 0 1 -6,-6 v-36 a6,6 0 0 1 6,-6 z"
-        android:fillColor="#FFFFFF"
-        android:fillAlpha="0.95" />
+        android:pathData="M44,27h20a14,14 0 0 1 14,14v26a14,14 0 0 1 -14,14h-20a14,14 0 0 1 -14,-14v-26a14,14 0 0 1 14,-14z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="54"
+                android:startY="27"
+                android:endX="54"
+                android:endY="81"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFFFFF" />
+                <item android:offset="1" android:color="#E9EFFF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 账目行（弱化，只补「这是一张账单」的读感） -->
     <path
-        android:pathData="M42,44 h24 M42,54 h24 M42,64 h14"
-        android:strokeColor="#3B6CF6"
+        android:pathData="M40,66h12M40,74h11"
+        android:strokeColor="#2A55D4"
+        android:strokeAlpha="0.30"
         android:strokeWidth="3.4"
         android:strokeLineCap="round" />
-    <!-- 闪电（自动） -->
+
+    <!-- ¥：V 形 + 竖笔 -->
     <path
-        android:pathData="M70,26 l-10,16 h7 l-4,14 12,-17 h-8 z"
-        android:fillColor="#FFD466" />
+        android:pathData="M38,36L49,47M60,36L49,47M49,47L49,59"
+        android:strokeColor="#2A55D4"
+        android:strokeWidth="4.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- ¥：两横 -->
+    <path
+        android:pathData="M38,51h22M38,56.5h21"
+        android:strokeColor="#2A55D4"
+        android:strokeWidth="4"
+        android:strokeLineCap="round" />
+
+    <!-- 金币 -->
+    <path android:pathData="M55,67a10,10 0 1 0 20,0a10,10 0 1 0 -20,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="55"
+                android:startY="57"
+                android:endX="75"
+                android:endY="77"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFE3A6" />
+                <item android:offset="1" android:color="#EFA133" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M58.2,67a6.8,6.8 0 1 0 13.6,0a6.8,6.8 0 1 0 -13.6,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeAlpha="0.55"
+        android:strokeWidth="1.4" />
 </vector>

@@ -44,12 +44,46 @@ class LedgerDb(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSION
             """.trimIndent()
         )
         createDeletedTable(db)
+        createCategoryTable(db)
+        createOverrideTable(db)
         db.execSQL("CREATE TABLE meta (k TEXT PRIMARY KEY, v TEXT)")
-        seedRules(db)
+        seedRules(db, onlyMissingCategories = false)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 2) createDeletedTable(db)
+        if (oldVersion < 3) {
+            createCategoryTable(db)
+            // v3 把分类从「一层 14 个」重构成「一级类 + 二级类」，关键词的归属也跟着动了。
+            // 内置规则的 category_key 必须整体刷新一次，否则「零食」还是被记到「餐饮」上。
+            // 用户自己加的规则（builtin=0）原样保留。
+            db.execSQL("DELETE FROM rule WHERE builtin=1")
+            seedRules(db, onlyMissingCategories = false)
+        }
+        if (oldVersion < 4) createOverrideTable(db)
+    }
+
+    /**
+     * 用户自建分类（二级类）。
+     *
+     * 只存二级类：一级类是代码里固定的 11 个，够用且不会飘。
+     * 存 color_name 而不是资源 id —— 资源 id 会随打包漂移，名字不会。
+     */
+    private fun createCategoryTable(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS category (
+                key        TEXT PRIMARY KEY,
+                label      TEXT    NOT NULL,
+                emoji      TEXT    NOT NULL DEFAULT '',
+                group_key  TEXT    NOT NULL,
+                direction  INTEGER NOT NULL,
+                color_name TEXT    NOT NULL DEFAULT '',
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                created_at INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
     }
 
     /**
@@ -77,14 +111,51 @@ class LedgerDb(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSION
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_deleted_time ON deleted_txn(occurred_at DESC)")
     }
 
-    private fun seedRules(db: SQLiteDatabase) {
+    /**
+     * 用户对「内置分类 / 一级类」的改动。
+     *
+     * 内置分类的 key 已经写在老数据里了，不能改，所以改名、换色、换图标、挪一级类
+     * 都记成补丁；删除也只是打上 hidden，账目本身改挂到兜底分类。
+     * 「恢复内置分类」时把这张表清空即可。
+     *
+     * @param level 0 = 一级类，1 = 二级类
+     */
+    private fun createOverrideTable(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS category_override (
+                key        TEXT PRIMARY KEY,
+                level      INTEGER NOT NULL DEFAULT 1,
+                label      TEXT    NOT NULL DEFAULT '',
+                emoji      TEXT    NOT NULL DEFAULT '',
+                color_name TEXT    NOT NULL DEFAULT '',
+                group_key  TEXT    NOT NULL DEFAULT '',
+                hidden     INTEGER NOT NULL DEFAULT 0,
+                updated_at INTEGER NOT NULL DEFAULT 0
+            )
+            """.trimIndent()
+        )
+    }
+
+    private fun seedRules(db: SQLiteDatabase, onlyMissingCategories: Boolean) {
+        val covered: Set<String> = if (!onlyMissingCategories) {
+            emptySet()
+        } else {
+            val set = HashSet<String>()
+            db.rawQuery("SELECT DISTINCT category_key FROM rule", null).use { c ->
+                while (c.moveToNext()) set += c.getString(0)
+            }
+            set
+        }
         db.beginTransaction()
         try {
-            Categories.builtinRules().forEach { r ->
-                db.insertWithOnConflict(
-                    "rule", null, r.toValues(), SQLiteDatabase.CONFLICT_IGNORE
-                )
-            }
+            Categories.builtinRules()
+                .filterNot { it.categoryKey in covered }
+                .forEach { r ->
+                    db.insertWithOnConflict(
+                        "rule", null, r.toValues(), SQLiteDatabase.CONFLICT_IGNORE
+                    )
+                }
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -93,7 +164,13 @@ class LedgerDb(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSION
 
     companion object {
         const val NAME = "ledger.db"
-        const val VERSION = 2
+        const val VERSION = 4
+
+        /** category_override.level：一级类 */
+        const val LEVEL_GROUP = 0
+
+        /** category_override.level：二级类 */
+        const val LEVEL_LEAF = 1
     }
 }
 

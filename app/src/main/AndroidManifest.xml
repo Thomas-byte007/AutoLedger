@@ -2,11 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 读取短信：用于识别银行卡消费/入账短信（可选，用户可随时关闭） -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
     <!-- Android 13+ 通知权限（应用自身提醒用） -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 后台常驻：前台服务（用户手动开启后才会启动） -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- Android 15 起 BOOT_COMPLETED 里不许再起 dataSync 型前台服务，specialUse 是唯一可选的类型 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- 看门狗用精确闹钟：它是「从后台启动前台服务」的豁免项，inexact 闹钟不是 -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- 开机 / 应用升级后把常驻服务重新拉起来 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 省电策略放行：引导系统不要休眠本应用，否则支付通知会漏 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -36,6 +44,25 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".ui.CategoryDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.CategoryBreakdownActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.CategoryManageActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.YearReportActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.RulesActivity"
             android:exported="false" />
 
@@ -43,7 +70,7 @@
             android:name=".ui.LogActivity"
             android:exported="false" />
 
-        <!-- 自动记账核心：监听微信 / 支付宝的支付通知 -->
+        <!-- 随手记核心：监听微信 / 支付宝的支付通知 -->
         <service
             android:name=".capture.PaymentNotificationListener"
             android:exported="true"
@@ -54,13 +81,47 @@
             </intent-filter>
         </service>
 
-        <!-- 补充来源：银行卡消费短信 -->
-        <receiver
-            android:name=".capture.SmsPaymentReceiver"
+        <!-- 补充来源：读微信 / 支付宝的「支付成功」页，覆盖不弹通知的场景 -->
+        <service
+            android:name=".capture.PaymentAccessibilityService"
             android:exported="true"
-            android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="900">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!--
+            后台常驻：stopWithTask=false，从最近任务划掉 App 也不会被一起停掉。
+
+            类型必须是 specialUse：Android 15（targetSdk 35）禁止在 BOOT_COMPLETED
+            接收器里启动 dataSync / camera / mediaPlayback / phoneCall / mediaProjection /
+            microphone 这几类前台服务，dataSync 正好在禁名单里，开机自启会直接抛
+            ForegroundServiceStartNotAllowedException。
+        -->
+        <service
+            android:name=".service.KeepAliveService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:stopWithTask="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="保持记账链路在后台待命，等待支付通知" />
+        </service>
+
+        <!-- 开机 / 升级后重新拉起常驻服务（没开开关就什么都不做） -->
+        <receiver
+            android:name=".service.KeepAliveReceiver"
+            android:exported="true"
+            android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
     </application>

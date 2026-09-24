@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 宠物（由 tools/gen_cat_icons.py 生成，改图标请改脚本后重跑） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12 12.4c2.6 0 5.2 1.7 5.2 4.2 0 1.6-1.2 2.6-2.8 2.6-1 0-1.6-.4-2.4-.4s-1.4.4-2.4.4c-1.6 0-2.8-1-2.8-2.6 0-2.5 2.6-4.2 5.2-4.2z"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M7.6 10a1.6 1.9 0 1 0 3.2 0 1.6 1.9 0 1 0-3.2 0"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M13.2 10a1.6 1.9 0 1 0 3.2 0 1.6 1.9 0 1 0-3.2 0"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M4.6 13.6a1.4 1.7 0 1 0 2.8 0 1.4 1.7 0 1 0-2.8 0"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M16.6 13.6a1.4 1.7 0 1 0 2.8 0 1.4 1.7 0 1 0-2.8 0"
+        android:strokeColor="#000000"
+        android:strokeWidth="1.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

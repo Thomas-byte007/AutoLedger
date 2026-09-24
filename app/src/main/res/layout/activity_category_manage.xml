@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:colorBackground"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <!-- ===== 顶栏 ===== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/gap_s"
+        android:paddingEnd="@dimen/gap_m">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="@dimen/touch_min"
+            android:layout_height="@dimen/touch_min"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_close"
+            android:padding="13dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_close"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/manage_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnRestore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:selectableItemBackground"
+            android:paddingStart="@dimen/gap_m"
+            android:paddingTop="@dimen/gap_s"
+            android:paddingEnd="@dimen/gap_m"
+            android:paddingBottom="@dimen/gap_s"
+            android:text="@string/manage_restore"
+            android:textColor="@color/brand_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/page_padding"
+        android:paddingEnd="@dimen/page_padding"
+        android:paddingBottom="@dimen/gap_m"
+        android:text="@string/manage_sub"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_small" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabDirection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/brand_primary"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabPaddingBottom="4dp"
+        app:tabRippleColor="@null"
+        app:tabSelectedTextColor="@color/text_primary"
+        app:tabTextAppearance="@style/EntryTabText"
+        app:tabTextColor="@color/text_secondary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/page_padding"
+            android:paddingTop="@dimen/gap_m"
+            android:paddingEnd="@dimen/page_padding"
+            android:paddingBottom="@dimen/gap_m">
+
+            <TextView
+                android:id="@+id/tvManageHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/gap_s"
+                android:textColor="@color/text_tertiary"
+                android:textSize="@dimen/text_small"
+                tools:text="支出 · 一级类 10 个 · 二级类 42 个" />
+
+            <LinearLayout
+                android:id="@+id/groupContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="56dp"
+                android:paddingBottom="56dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_empty_inbox" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/gap_m"
+                    android:text="@string/manage_empty"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAdd"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="@dimen/page_padding"
+        android:layout_marginTop="@dimen/gap_s"
+        android:layout_marginEnd="@dimen/page_padding"
+        android:layout_marginBottom="@dimen/gap_l"
+        android:backgroundTint="@color/brand_primary"
+        android:text="@string/picker_add"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_subtitle"
+        android:textStyle="bold"
+        app:cornerRadius="@dimen/card_radius"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart"
+        app:iconTint="@color/white" />
+
+</LinearLayout>

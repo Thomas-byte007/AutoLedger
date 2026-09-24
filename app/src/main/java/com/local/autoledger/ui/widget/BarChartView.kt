@@ -112,11 +112,18 @@ class BarChartView @JvmOverloads constructor(
             canvas.drawText(bar.label, cx, h - 5f * density, labelPaint)
 
             // 支出金额
+            // 柱子很矮（某个月对比悬殊）时，标注会被贴到坐标轴上和月份挤在一起；
+            // 更极端的情况是同一组里的收入柱很高，会把标注盖住。
+            // 所以先按「柱顶 + 4dp」放，放不下就抬到整组最高的那根柱子上面。
             if (bar.expense > 0 && scale > 0.9f) {
+                val minY = baseY - 13f * density
+                var ly = baseY - bh - 4f * density
+                if (ly > minY) ly = baseY - max(bh, ih) - 4f * density
+                if (ly > minY) ly = minY
                 canvas.drawText(
                     shorten(bar.expense),
                     cx - barW / 2f - gap / 2f,
-                    baseY - bh - 4f * density,
+                    ly,
                     valuePaint
                 )
             }
