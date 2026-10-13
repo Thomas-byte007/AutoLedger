@@ -70,12 +70,17 @@ class CategoryBreakdownActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         renderHeader()
-        load()
     }
 
     override fun onStart() {
         super.onStart()
         LedgerBus.register(refresh)
+    }
+
+    /** 在编辑页删除记录后返回时总线事件已错过（当时整个任务在 onStop），回前台必须重查 */
+    override fun onResume() {
+        super.onResume()
+        load()
     }
 
     override fun onStop() {

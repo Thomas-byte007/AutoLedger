@@ -95,6 +95,44 @@ class ScreenCaptureTest {
         assertEquals(Direction.INCOME, p.direction)
     }
 
+    // ------------------------------------------------ 支付宝「碰一下」
+
+    @Test
+    fun `碰一下金额晚一步渲染出来也不会漏`() {
+        // 碰一下的支付成功页，金额是从无到有画上去的：窗口事件刚到的那一帧只有这几个字。
+        // 这一帧不能记账，但必须被认成「金额还没出来」，服务才会安排重扫。
+        val early = "碰一下就支付 支付成功 完成"
+        assertNull(PaymentParser.parsePaymentScreen(PaymentParser.PKG_ALIPAY, early))
+        assertEquals(true, PaymentParser.incompleteSuccessPage(PaymentParser.PKG_ALIPAY, early))
+
+        // 金额渲染出来之后，同一套文案就能正常解析
+        val p = PaymentParser.parsePaymentScreen(
+            PaymentParser.PKG_ALIPAY, "碰一下支付成功 -5.00 全家便利店 花呗 完成"
+        )
+        assertNotNull(p)
+        assertEquals(500L, p!!.amountCents)
+        assertEquals(Direction.EXPENSE, p.direction)
+    }
+
+    @Test
+    fun `中间态与非支付应用不算未完成的成功页`() {
+        // 没有「成功」字样的中间态页面不触发重扫
+        assertEquals(
+            false,
+            PaymentParser.incompleteSuccessPage(PaymentParser.PKG_ALIPAY, "碰一下就支付 付款方式选择")
+        )
+        // 只有金额没有成功字样，同样不重扫
+        assertEquals(
+            false,
+            PaymentParser.incompleteSuccessPage(PaymentParser.PKG_WECHAT, "¥25.00 瑞幸咖啡 零钱")
+        )
+        // 非微信 / 支付宝的页面一律不管
+        assertEquals(
+            false,
+            PaymentParser.incompleteSuccessPage("com.taobao.taobao", "支付成功")
+        )
+    }
+
     // ------------------------------------------------ 不该记的
 
     @Test

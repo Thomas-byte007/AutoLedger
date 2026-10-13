@@ -9,7 +9,6 @@ object Prefs {
 
     const val KEY_CAPTURE_ENABLED = "capture_enabled"
     const val KEY_KEEP_ALIVE = "keep_alive"
-    const val KEY_LAST_IMPORT_AT = "last_import_at"
     const val KEY_DISMISS_ONBOARD = "dismiss_onboard"
     const val KEY_ACCESS_ENABLED = "access_enabled"
     const val KEY_LAST_NOTIFY_AT = "last_notify_at"
@@ -24,10 +23,6 @@ object Prefs {
     var captureEnabled: Boolean
         get() = sp.getBoolean(KEY_CAPTURE_ENABLED, true)
         set(v) = sp.edit().putBoolean(KEY_CAPTURE_ENABLED, v).apply()
-
-    var lastImportAt: Long
-        get() = sp.getLong(KEY_LAST_IMPORT_AT, 0L)
-        set(v) = sp.edit().putLong(KEY_LAST_IMPORT_AT, v).apply()
 
     /**
      * 后台常驻：前台服务 + 常驻通知。

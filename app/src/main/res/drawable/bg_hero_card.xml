@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  顶部概览卡：扁平单色墨蓝。
+  原来是 315° 的蓝色渐变 + 半透明白数据块，那套「渐变 + 高光」是整套界面里最重的
+  AI 生成感来源；改成一块沉静的墨蓝，信息层级靠字号和透明度搭，反而更像银行类产品。
+-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="24dp" />
-    <gradient
-        android:angle="315"
-        android:endColor="#2A55D4"
-        android:startColor="#4C7BFF"
-        android:type="linear" />
+    <corners android:radius="18dp" />
+    <solid android:color="@color/hero_ink" />
 </shape>

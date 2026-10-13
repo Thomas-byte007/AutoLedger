@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 状态卡里的「累计 / 本月 / 待分类」数据条底色，半透明白叠在蓝色渐变上 -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <corners android:radius="16dp" />
-    <solid android:color="#26FFFFFF" />
-</shape>

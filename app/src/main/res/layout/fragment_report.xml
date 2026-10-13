@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:alpha="0.85"
                     android:text="本月支出"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="13sp" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
                     android:text="¥0.00"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/text_hero"
                     android:textStyle="bold" />
 
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/gap_xs"
                     android:alpha="0.9"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/white"
                     android:textSize="12sp" />
 
                 <View
@@ -142,7 +142,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.8"
                             android:text="收入"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="11sp" />
 
                         <TextView
@@ -151,7 +151,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/text_subtitle"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -167,7 +167,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.8"
                             android:text="笔数"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="11sp" />
 
                         <TextView
@@ -176,7 +176,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/text_subtitle"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -192,7 +192,7 @@
                             android:layout_height="wrap_content"
                             android:alpha="0.8"
                             android:text="日均支出"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="11sp" />
 
                         <TextView
@@ -201,7 +201,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/text_subtitle"
                             android:textStyle="bold" />
                     </LinearLayout>

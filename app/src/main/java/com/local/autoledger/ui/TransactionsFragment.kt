@@ -172,7 +172,7 @@ class TransactionsFragment : Fragment() {
                 }
                 Filter.PENDING -> {
                     binding.tvEmptyTitle.text = "没有待分类的记录"
-                    binding.tvEmptyDesc.text = "所有账目都已经归类完成了 👍"
+                    binding.tvEmptyDesc.text = "所有账目都已经归类完成"
                 }
                 else -> {
                     binding.tvEmptyTitle.text = "这个月没有${filter.label}记录"

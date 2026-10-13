@@ -16,12 +16,6 @@ enum class Direction(val code: Int, val label: String) {
 
     companion object {
         fun of(code: Int): Direction = if (code == 1) INCOME else EXPENSE
-        fun ofLabel(text: String?): Direction? = when {
-            text == null -> null
-            text.contains("支出") || text.contains("支") && text.length == 1 -> EXPENSE
-            text.contains("收入") || text.contains("收") && text.length == 1 -> INCOME
-            else -> null
-        }
     }
 }
 
@@ -265,7 +259,6 @@ object TimeFmt {
     fun monthLabel(ym: YearMonth): String = ym.format(fullFmt)
     fun hm(ts: Long): String = toLocal(ts).format(hmFmt)
     fun detail(ts: Long): String = toLocal(ts).format(detailFmt)
-    fun monthRangeLabel(ym: YearMonth): String = ym.format(fullFmt)
 }
 
 object Money {

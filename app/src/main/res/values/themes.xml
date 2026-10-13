@@ -38,50 +38,10 @@
     </style>
 
     <style name="Widget.AutoLedger.Card" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardCornerRadius">20dp</item>
+        <item name="cardCornerRadius">16dp</item>
         <item name="cardElevation">0dp</item>
         <item name="cardBackgroundColor">@color/surface_card</item>
         <item name="strokeColor">@color/divider</item>
         <item name="strokeWidth">1dp</item>
-    </style>
-
-    <style name="Text.Title" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Text.Section" parent="TextAppearance.Material3.TitleSmall">
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Text.Caption" parent="TextAppearance.Material3.BodySmall">
-        <item name="android:textColor">@color/text_secondary</item>
-    </style>
-
-    <style name="Text.Amount" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/text_primary</item>
-    </style>
-
-    <style name="Widget.AutoLedger.Chip" parent="Widget.Material3.Chip.Filter">
-        <item name="chipBackgroundColor">@color/chip_bg</item>
-        <item name="android:textColor">@color/chip_text</item>
-        <item name="chipStrokeWidth">0dp</item>
-    </style>
-
-    <style name="Widget.AutoLedger.Button" parent="Widget.Material3.Button.UnelevatedButton">
-        <item name="cornerRadius">16dp</item>
-        <item name="android:paddingTop">14dp</item>
-        <item name="android:paddingBottom">14dp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Widget.AutoLedger.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="cornerRadius">16dp</item>
-        <item name="android:paddingTop">14dp</item>
-        <item name="android:paddingBottom">14dp</item>
-        <item name="strokeColor">@color/divider</item>
-        <item name="android:textColor">@color/text_primary</item>
     </style>
 </resources>

@@ -29,6 +29,9 @@ import java.util.concurrent.Executors
  * 而是等 [CONFIRM_DELAY_MS] 再回头看一眼最近有没有同一金额的记录 ——
  * 有就说明通知链路已经记过了，直接让开。所以无障碍是「补漏」而不是「抢记」，
  * 也就不需要给账目表加来源列去判重。
+ *
+ * 碰一下为什么要重扫：支付宝「碰一下」的成功页金额是动画渲染的，事件刚到的那一帧
+ * 还没有金额，而页面又会在付完立刻返回。见 [handleScreen]。
  */
 class PaymentAccessibilityService : AccessibilityService() {
 
@@ -143,12 +146,47 @@ class PaymentAccessibilityService : AccessibilityService() {
     }
 
     private fun submit(pkg: String, text: String, fromScreen: Boolean) {
-        val parsed = if (fromScreen) {
-            PaymentParser.parsePaymentScreen(pkg, text)
-        } else {
-            PaymentParser.parseNotification(pkg, text)
-        } ?: return
+        if (fromScreen) {
+            handleScreen(pkg, text)
+            return
+        }
+        val parsed = PaymentParser.parseNotification(pkg, text) ?: return
+        enqueue(parsed)
+    }
 
+    /**
+     * 支付成功页的入口。
+     *
+     * 这里多一层「金额还没渲染出来」的处理：支付宝「碰一下」的支付成功页，金额是从无到有
+     * 做动画画上去的，窗口事件打过来时那一帧里根本没有金额；而且「极速模式」下付完会立刻
+     * 返回原页面，页面停留极短。于是**不能**只靠后续事件碰运气 —— [scanPage] 有 800ms 节流，
+     * 真等到下一个事件，页面往往已经切走了，这笔就永久漏掉。
+     * 判定为「成功页但缺金额」时自己排几次短延迟重扫，拿到就落库。
+     */
+    private fun handleScreen(pkg: String, text: String) {
+        val parsed = PaymentParser.parsePaymentScreen(pkg, text)
+        if (parsed != null) {
+            enqueue(parsed)
+            return
+        }
+        if (PaymentParser.incompleteSuccessPage(pkg, text)) scheduleRescan(pkg, 0)
+    }
+
+    /** 隔一小会儿再看一眼当前窗口，直到拿到金额或重试次数用尽 */
+    private fun scheduleRescan(pkg: String, attempt: Int) {
+        if (attempt >= RESCAN_DELAYS_MS.size) return
+        handler.postDelayed({
+            if (!running || !Prefs.accessEnabled) return@postDelayed
+            // 窗口可能已经切走 —— 碰一下付完就回原页面了，别把别的应用的字当成支付页
+            val root = runCatching { rootInActiveWindow }.getOrNull() ?: return@postDelayed
+            if (root.packageName?.toString() != pkg) return@postDelayed
+            val text = runCatching { collectText(root) }.getOrDefault("")
+            val parsed = if (text.isBlank()) null else PaymentParser.parsePaymentScreen(pkg, text)
+            if (parsed != null) enqueue(parsed) else scheduleRescan(pkg, attempt + 1)
+        }, RESCAN_DELAYS_MS[attempt])
+    }
+
+    private fun enqueue(parsed: PaymentParser.Parsed) {
         val key = "${parsed.channel.key}|${parsed.amountCents}|${parsed.direction.code}"
         val now = System.currentTimeMillis()
         synchronized(recent) {
@@ -200,5 +238,14 @@ class PaymentAccessibilityService : AccessibilityService() {
         private const val MAX_NODES = 240
         private const val MAX_DEPTH = 10
         private const val SCREEN_TEXT_CAP = 1200
+
+        /**
+         * 「金额还没画出来」时的重扫节奏。
+         *
+         * 支付宝碰一下的金额是个短动画，几百毫秒内就位；但页面可能只停留一两秒，
+         * 所以头两次要快，最后再兜一次慢的。总时长刻意压在通知链路的
+         * [CONFIRM_DELAY_MS] 之内，保证「通知优先」的次序不变。
+         */
+        private val RESCAN_DELAYS_MS = longArrayOf(350L, 900L, 1_800L)
     }
 }

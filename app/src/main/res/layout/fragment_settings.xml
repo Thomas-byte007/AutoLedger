@@ -88,12 +88,13 @@
                     android:textSize="13sp"
                     tools:text="微信 / 支付宝付款时会自动记账" />
 
-                <!-- 三个关键数字：把低频的信息密度压在这一条里，避免再占一屏 -->
+                <!-- 三个关键数字：把低频的信息密度压在这一条里，避免再占一屏。
+                     只靠细分隔线分区，不再叠一层半透明白块 —— 那层「半透明面板」是渐变卡
+                     时代的遗留装饰，去掉之后整块墨蓝更干净。 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/gap_l"
-                    android:background="@drawable/bg_hero_metrics"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/gap_m"
                     android:paddingTop="@dimen/gap_m"
@@ -130,7 +131,7 @@
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="#33FFFFFF" />
+                        android:background="@color/divider_translucent" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -163,7 +164,7 @@
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="#33FFFFFF" />
+                        android:background="@color/divider_translucent" />
 
                     <LinearLayout
                         android:layout_width="0dp"

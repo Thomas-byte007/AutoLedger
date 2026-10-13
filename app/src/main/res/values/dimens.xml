@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ===== 页面 / 卡片 ===== -->
+    <!-- ===== 页面 / 卡片 =====
+         圆角整体收一档：20/24dp 的「大圆角 + 纯白卡片浮在淡底上」是 AI 生成式界面的
+         典型配方，16/18dp 更接近原生 Material 与真实产品的手感。 -->
     <dimen name="page_padding">16dp</dimen>
     <dimen name="card_padding">16dp</dimen>
-    <dimen name="card_radius">20dp</dimen>
-    <dimen name="card_radius_lg">24dp</dimen>
+    <dimen name="card_radius">16dp</dimen>
+    <dimen name="card_radius_lg">18dp</dimen>
 
     <!-- ===== 节奏间距(8 的整数倍,Material) ===== -->
     <dimen name="gap_xxs">2dp</dimen>
@@ -14,9 +16,6 @@
     <dimen name="gap_l">16dp</dimen>
     <dimen name="gap_xl">20dp</dimen>
     <dimen name="gap_xxl">24dp</dimen>
-
-    <!-- 兼容旧命名(以前 layout 里直接用了名字,先保留) -->
-    <dimen name="page_padding_old">6dp</dimen>
 
     <!-- ===== 组件尺寸 ===== -->
     <dimen name="icon_badge">44dp</dimen>
@@ -29,7 +28,6 @@
 
     <!-- ===== 列表项 / 行 ===== -->
     <dimen name="list_item_height">64dp</dimen>
-    <dimen name="list_item_height_compact">56dp</dimen>
 
     <!-- 大屏上正文的最大宽度：0dp 表示不限宽（手机），平板 / 折叠屏在 sw600dp 里覆盖 -->
     <dimen name="content_max_width">0dp</dimen>

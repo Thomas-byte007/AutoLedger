@@ -21,7 +21,7 @@ import com.local.autoledger.data.Txn
 import com.local.autoledger.ui.MainActivity
 
 /**
- * 把解析结果落库的唯一出口。通知监听、短信、账单导入都走这里，
+ * 把解析结果落库的唯一出口。支付通知与无障碍辅助记账都走这里，
  * 保证分类逻辑与去重策略只有一份。
  */
 object CaptureSink {
@@ -36,8 +36,7 @@ object CaptureSink {
         context: Context,
         parsed: PaymentParser.Parsed,
         occurredAt: Long,
-        dedupWindowSec: Long = 240,
-        quiet: Boolean = false
+        dedupWindowSec: Long = 240
     ): Long {
         val match = LedgerRepository.classify(parsed.direction, parsed.merchant, parsed.rawText)
         val txn = Txn(
@@ -60,7 +59,7 @@ object CaptureSink {
                 "记账",
                 "${parsed.channel.label} ${Money.signed(txn.amountCents, txn.direction)} · $label$merchant"
             )
-            if (!quiet) notifyCaptured(context, txn)
+            notifyCaptured(context, txn)
         } else {
             CaptureLog.add("跳过", "${result.reason}｜${CaptureLog.brief(parsed.rawText)}")
         }

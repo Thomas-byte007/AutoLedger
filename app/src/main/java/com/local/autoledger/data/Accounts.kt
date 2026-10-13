@@ -9,14 +9,14 @@ package com.local.autoledger.data
  */
 object Accounts {
 
-    data class Account(val key: String, val label: String, val emoji: String)
+    data class Account(val key: String, val label: String)
 
-    val cash = Account("cash", "现金", "💵")
-    val wechat = Account("wechat", "微信零钱", "💚")
-    val alipay = Account("alipay", "支付宝余额", "💙")
-    val debit = Account("debit", "储蓄卡", "🏦")
-    val credit = Account("credit", "信用卡", "💳")
-    val other = Account("other", "其他账户", "👛")
+    val cash = Account("cash", "现金")
+    val wechat = Account("wechat", "微信零钱")
+    val alipay = Account("alipay", "支付宝余额")
+    val debit = Account("debit", "储蓄卡")
+    val credit = Account("credit", "信用卡")
+    val other = Account("other", "其他账户")
 
     val ALL: List<Account> = listOf(cash, wechat, alipay, debit, credit, other)
 
@@ -25,9 +25,6 @@ object Accounts {
     /** 展示用：优先按已知账户反查，认不出来就原样显示通知里抓到的文本 */
     fun labelOf(payMethod: String?): String =
         payMethod?.takeIf { it.isNotBlank() } ?: DEFAULT.label
-
-    fun emojiOf(payMethod: String?): String =
-        ALL.firstOrNull { it.label == payMethod }?.emoji ?: other.emoji
 
     fun isKnown(payMethod: String?): Boolean = ALL.any { it.label == payMethod }
 }

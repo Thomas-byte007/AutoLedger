@@ -1,71 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ===== 品牌 / 中性色 ===== -->
-    <color name="brand_primary">#3B6CF6</color>
-    <color name="brand_primary_dark">#2A55D4</color>
-    <color name="brand_container">#E8EFFF</color>
-    <color name="brand_on_container">#17357F</color>
+    <!-- ===== 品牌 / 中性色 =====
+         主色走「沉稳可信」的蓝：把饱和度从 91% 降到 58%、色相从偏紫的 222° 挪到 218°。
+         记账工具的彩色预算应该留给金额（支出红 / 收入绿）和分类，品牌色本身克制一点，
+         整屏才不像模板渲染出来的图表页。 -->
+    <color name="brand_primary">#3163B9</color>
+    <color name="brand_container">#E4EBF6</color>
+    <color name="brand_on_container">#204179</color>
 
-    <color name="bg_page">#F4F6FB</color>
+    <!-- 页面底色改用中性灰：之前那层淡紫灰（#F4F6FB）整套界面都泛蓝紫，是最扎眼的一处 -->
+    <color name="bg_page">#F5F6F8</color>
     <color name="surface_card">#FFFFFF</color>
-    <color name="surface_variant">#EDF1F8</color>
-    <color name="divider">#E9EDF4</color>
+    <color name="surface_variant">#EFF0F3</color>
+    <color name="divider">#E6E7EB</color>
 
-    <color name="text_primary">#131722</color>
-    <color name="text_secondary">#8A93A6</color>
-    <color name="text_tertiary">#AEB6C6</color>
+    <color name="text_primary">#16181D</color>
+    <!-- 次要文字从 #8A93A6 压深到 #5A616E：原来的对比度只有 3.1:1，达不到 4.5:1 -->
+    <color name="text_secondary">#5A616E</color>
+    <color name="text_tertiary">#6F7680</color>
 
-    <color name="expense_red">#F0544F</color>
-    <color name="income_green">#12B76A</color>
+    <color name="expense_red">#C93A36</color>
+    <color name="income_green">#27A571</color>
 
-    <!-- ===== 分类色 ===== -->
-    <color name="cat_dining">#FF7A45</color>
-    <color name="cat_transport">#3B82F6</color>
-    <color name="cat_shopping">#EC4899</color>
-    <color name="cat_grocery">#06B6D4</color>
-    <color name="cat_housing">#8B5CF6</color>
-    <color name="cat_entertainment">#F59E0B</color>
-    <color name="cat_medical">#EF4444</color>
-    <color name="cat_education">#6366F1</color>
-    <color name="cat_travel">#14B8A6</color>
-    <color name="cat_transfer">#94A3B8</color>
-    <color name="cat_other">#64748B</color>
-    <color name="cat_salary">#16A34A</color>
-    <color name="cat_refund">#22C55E</color>
-    <color name="cat_other_income">#0EA5E9</color>
+    <!-- 顶部概览卡：扁平单色墨蓝，不用渐变、不用高光 —— 渐变卡是「AI 生成感」最重的元素 -->
+    <color name="hero_ink">#2C3D59</color>
+    <!-- 墨蓝卡上的次级文字色（月份、说明串），比纯白低一档 -->
+    <color name="hero_text_soft">#C6D4E8</color>
 
-    <!-- ===== 二级类补充色（一级类沿用上面的主色） ===== -->
-    <color name="cat_snack">#FB923C</color>
-    <color name="cat_drink">#F472B6</color>
-    <color name="cat_fruit">#84CC16</color>
-    <color name="cat_dinner">#EA580C</color>
-    <color name="cat_taxi">#38BDF8</color>
-    <color name="cat_fuel">#F59E0B</color>
-    <color name="cat_parking">#818CF8</color>
-    <color name="cat_clothing">#DB2777</color>
-    <color name="cat_appliance">#7C3AED</color>
-    <color name="cat_express">#A16207</color>
-    <color name="cat_digital">#2563EB</color>
-    <color name="cat_beauty">#EC6BA8</color>
-    <color name="cat_stationery">#4F46E5</color>
-    <color name="cat_exam">#0891B2</color>
-    <color name="cat_rent">#9333EA</color>
-    <color name="cat_utility">#EAB308</color>
-    <color name="cat_furniture">#A855F7</color>
-    <color name="cat_medicine">#DC2626</color>
-    <color name="cat_checkup">#F43F5E</color>
-    <color name="cat_comm">#0284C7</color>
-    <color name="cat_broadband">#22D3EE</color>
-    <color name="cat_fitness">#22C55E</color>
-    <color name="cat_media">#C026D3</color>
-    <color name="cat_game">#F97316</color>
-    <color name="cat_gift">#D946EF</color>
-    <color name="cat_pet">#D97706</color>
-    <color name="cat_bonus">#CA8A04</color>
-    <color name="cat_redpacket">#E11D48</color>
+    <!-- ===== 分类色 =====
+         同一个色族 = 同一个一级类。色相按 11 个一级类在色环上均匀铺开，
+         全部收在 14%~70% 饱和度、32%~66% 明度这一条带里，二级类只跟着所属一级类
+         微调明度，所以一屏名单看起来是「设计过的一套」，而不是一堆随机高饱和色。 -->
+    <color name="cat_dining">#C6612F</color>
+    <color name="cat_transport">#317FC4</color>
+    <color name="cat_shopping">#BF36BF</color>
+    <color name="cat_grocery">#31B99E</color>
+    <color name="cat_housing">#6938BC</color>
+    <color name="cat_entertainment">#C6A02F</color>
+    <color name="cat_medical">#C4316E</color>
+    <color name="cat_education">#3648BF</color>
+    <color name="cat_travel">#2368A4</color>
+    <color name="cat_transfer">#93A1AE</color>
+    <color name="cat_other">#7F8F9F</color>
+    <color name="cat_salary">#2DA967</color>
+    <color name="cat_refund">#25985B</color>
+    <color name="cat_other_income">#1F8951</color>
 
-    <color name="wave_a">#3B6CF6</color>
-    <color name="wave_b">#F0544F</color>
+    <!-- ===== 二级类：沿用所属一级类的色相，只微调明度 ===== -->
+    <color name="cat_snack">#CD774C</color>
+    <color name="cat_drink">#B55626</color>
+    <color name="cat_fruit">#CE8764</color>
+    <color name="cat_dinner">#A64D21</color>
+    <color name="cat_taxi">#4E90CA</color>
+    <color name="cat_fuel">#2972B3</color>
+    <color name="cat_parking">#669CCC</color>
+    <color name="cat_clothing">#49C5AD</color>
+    <color name="cat_appliance">#29A88F</color>
+    <color name="cat_express">#60C7B3</color>
+    <color name="cat_digital">#C653C6</color>
+    <color name="cat_beauty">#AE2DAE</color>
+    <color name="cat_stationery">#5362C6</color>
+    <color name="cat_exam">#2D3EAE</color>
+    <color name="cat_rent">#7E55C3</color>
+    <color name="cat_utility">#5D2FAC</color>
+    <color name="cat_furniture">#8D6CC6</color>
+    <color name="cat_medicine">#CA4E82</color>
+    <color name="cat_checkup">#B32962</color>
+    <color name="cat_comm">#31A7B9</color>
+    <color name="cat_broadband">#49B5C5</color>
+    <color name="cat_fitness">#CDAC4C</color>
+    <color name="cat_media">#B59126</color>
+    <color name="cat_game">#CEB464</color>
+    <color name="cat_gift">#6D8297</color>
+    <color name="cat_pet">#9CA8B4</color>
+    <color name="cat_bonus">#3CBE79</color>
+    <color name="cat_redpacket">#51C286</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

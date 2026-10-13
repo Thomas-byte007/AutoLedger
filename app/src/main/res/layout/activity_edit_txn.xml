@@ -583,7 +583,7 @@
                 android:background="@drawable/bg_keypad_confirm"
                 android:gravity="center"
                 android:text="@string/keypad_confirm"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="17sp"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -77,6 +77,6 @@
         android:src="@drawable/ic_add"
         app:backgroundTint="@color/brand_primary"
         app:elevation="6dp"
-        app:tint="#FFFFFF" />
+        app:tint="@color/white" />
 
 </FrameLayout>

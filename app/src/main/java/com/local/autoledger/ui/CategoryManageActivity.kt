@@ -69,13 +69,20 @@ class CategoryManageActivity : AppCompatActivity() {
         binding.tabDirection.getTabAt(
             if (direction == Direction.INCOME) 1 else 0
         )?.select()
-
+        // 注意：默认方向（支出）的标签在 addTab 时就已选中，上面的 select() 不会再派发
+        // onTabSelected，所以这里必须显式 load 一次；onResume 里的那次与之重复也无妨
         load()
     }
 
     override fun onStart() {
         super.onStart()
         LedgerBus.register(refresh)
+    }
+
+    /** 回前台重查一次：停在 onStop 期间的账目变动（自动记账/删除）不会补发总线事件 */
+    override fun onResume() {
+        super.onResume()
+        load()
     }
 
     override fun onStop() {

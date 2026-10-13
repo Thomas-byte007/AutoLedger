@@ -34,5 +34,8 @@
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
+        <!-- 夜间主题是整份覆盖而不是叠加：不写这一行，深色下所有卡片会退回 Material 默认样式，
+             和浅色下的「0 阴影 + 1dp 描边」完全不是一套语言 -->
+        <item name="materialCardViewStyle">@style/Widget.AutoLedger.Card</item>
     </style>
 </resources>

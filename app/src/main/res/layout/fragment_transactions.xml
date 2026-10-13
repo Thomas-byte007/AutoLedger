@@ -45,7 +45,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textColor="#DCE6FF"
+                            android:textColor="@color/hero_text_soft"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -58,7 +58,7 @@
                             android:padding="10dp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_arrow_left"
-                            app:tint="#FFFFFF" />
+                            app:tint="@color/white" />
 
                         <ImageButton
                             android:id="@+id/btnNextMonth"
@@ -70,7 +70,7 @@
                             android:padding="10dp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_arrow_right"
-                            app:tint="#FFFFFF" />
+                            app:tint="@color/white" />
                     </LinearLayout>
 
                     <TextView
@@ -79,7 +79,7 @@
                         android:layout_marginTop="@dimen/gap_l"
                         android:alpha="0.85"
                         android:text="本月支出"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/white"
                         android:textSize="13sp" />
 
                     <TextView
@@ -88,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:text="¥0.00"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/white"
                         android:textSize="@dimen/text_hero"
                         android:textStyle="bold" />
 
@@ -114,7 +114,7 @@
                                 android:layout_height="wrap_content"
                                 android:alpha="0.8"
                                 android:text="收入"
-                                android:textColor="#FFFFFF"
+                                android:textColor="@color/white"
                                 android:textSize="11sp" />
 
                             <TextView
@@ -124,7 +124,7 @@
                                 android:layout_marginTop="2dp"
                                 android:fontFamily="sans-serif-medium"
                                 android:text="¥0.00"
-                                android:textColor="#FFFFFF"
+                                android:textColor="@color/white"
                                 android:textSize="@dimen/text_subtitle"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -146,7 +146,7 @@
                                 android:layout_height="wrap_content"
                                 android:alpha="0.8"
                                 android:text="结余"
-                                android:textColor="#FFFFFF"
+                                android:textColor="@color/white"
                                 android:textSize="11sp" />
 
                             <TextView
@@ -156,7 +156,7 @@
                                 android:layout_marginTop="2dp"
                                 android:fontFamily="sans-serif-medium"
                                 android:text="¥0.00"
-                                android:textColor="#FFFFFF"
+                                android:textColor="@color/white"
                                 android:textSize="@dimen/text_subtitle"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -183,7 +183,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="#7A4B00"
+                    android:textColor="@color/badge_pending_text"
                     android:textSize="13sp" />
 
                 <TextView

@@ -73,12 +73,20 @@ class ReportFragment : Fragment() {
         }
         // 点月份标题：底部滑出「选择时间」面板，直接挑任意月份或全年（年度账单并入这里）
         binding.tvMonth.setOnClickListener { showPeriodPicker() }
-        load()
     }
 
     override fun onStart() {
         super.onStart()
         LedgerBus.register(refresh)
+    }
+
+    /**
+     * 回到前台必须重查一次：在编辑页删掉记录时，整个任务都停在 onStop，
+     * LedgerBus 事件已经错过；只靠 onStart 重新注册是收不到"补发"的。
+     */
+    override fun onResume() {
+        super.onResume()
+        load()
     }
 
     override fun onStop() {

@@ -6,7 +6,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import com.local.autoledger.data.Category
 
 object ThemeUtil {
 
@@ -36,8 +35,6 @@ object ThemeUtil {
         }
 
     @ColorInt
-    fun categoryColor(context: Context, category: Category): Int = color(context, category.colorRes)
-
     fun expenseColor(context: Context): Int = color(context, com.local.autoledger.R.color.expense_red)
     fun incomeColor(context: Context): Int = color(context, com.local.autoledger.R.color.income_green)
 }

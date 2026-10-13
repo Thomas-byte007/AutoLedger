@@ -127,20 +127,6 @@ object LedgerRepository {
         reloadRules()
     }
 
-    /** 把某分类的自动判定结果回写：所有未分类 / 同商户的记录一并更新 */
-    @Synchronized
-    fun applyCategoryToMerchant(merchant: String, categoryKey: String, direction: Direction): Int {
-        if (merchant.isBlank()) return 0
-        val cv = ContentValues().apply {
-            put("category_key", categoryKey)
-            put("auto_category", 1)
-        }
-        return helper.writableDatabase.update(
-            "txn", cv, "merchant=? AND direction=?",
-            arrayOf(merchant, direction.code.toString())
-        )
-    }
-
     // ------------------------------------------------------------------ 分类
 
     fun classify(direction: Direction, merchant: String, rawText: String): CategoryEngine.Match {

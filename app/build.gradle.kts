@@ -26,8 +26,8 @@ android {
         applicationId = "com.local.autoledger"
         minSdk = 26
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.5.3"
+        versionCode = 14
+        versionName = "1.6.1"
         vectorDrawables { useSupportLibrary = true }
     }
 

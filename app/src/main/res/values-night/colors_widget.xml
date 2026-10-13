@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="banner_bg">#332A1B00</color>
-    <color name="banner_pill">#4D2A1B00</color>
-    <color name="badge_pending_bg">#33C4700A</color>
-    <color name="badge_pending_text">#FFC470</color>
+    <color name="banner_bg">#33F0DCB6</color>
+    <color name="banner_pill">#4DE0BE8A</color>
+    <color name="badge_pending_bg">#33E0BE8A</color>
+    <color name="badge_pending_text">#E5C08A</color>
     <color name="divider_translucent">#33FFFFFF</color>
-    <color name="legend_track">#22262F</color>
+    <color name="legend_track">#24262A</color>
 </resources>

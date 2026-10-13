@@ -11,23 +11,13 @@
     <string name="income">收入</string>
     <string name="balance">结余</string>
 
-    <string name="today">今天</string>
-    <string name="yesterday">昨天</string>
-
     <string name="empty_title">本月还没有记录</string>
     <string name="empty_desc">开启「支付通知记账」后，微信和支付宝的付款会自动出现在这里；也可以点击右下角手动记一笔。</string>
 
-    <string name="filter_all">全部</string>
-
     <string name="untagged">待分类</string>
-    <string name="auto_tagged">已自动分类</string>
 
     <string name="report_title">月度账单</string>
-    <string name="report_category_rank">分类占比</string>
     <string name="report_trend">近 6 个月趋势</string>
-
-    <string name="settings_auto_capture">随手记</string>
-    <string name="settings_notification_access">读取支付通知</string>
 
     <string name="accessibility_service_label">随手记 · 辅助记账</string>
     <string name="accessibility_desc">只在微信、支付宝的「支付成功」页面读取金额，用于自动记账。不读取聊天内容、不读取密码输入框，所有数据仅保存在本机。</string>
@@ -51,13 +41,8 @@
     <string name="battery_bg_restricted">后台受限</string>
     <string name="relink_title">重新连接通知监听</string>
     <string name="relink_done">已重新连接，下一次付款就能试出来了</string>
-    <string name="settings_rules">分类规则</string>
-    <string name="settings_import">导入微信/支付宝账单</string>
-    <string name="settings_export">导出账本数据</string>
-    <string name="settings_clear">清空全部数据</string>
     <string name="settings_privacy">隐私说明</string>
 
-    <string name="action_granted">已开启</string>
     <string name="action_grant">去开启</string>
     <string name="action_close">关闭</string>
     <string name="action_save">保存</string>
@@ -149,9 +134,7 @@
     <string name="year_max_txn">最大单笔</string>
     <string name="year_busiest_month">花得最多的月份</string>
     <string name="year_compare_first">这是第一年有记录</string>
-    <string name="year_view_month_detail">看这个月</string>
 
-    <!-- ===== 后台常驻 ===== -->
     <!-- ===== 我的 ===== -->
     <string name="mine_metric_total">累计记账</string>
     <string name="mine_metric_month">本月支出</string>
@@ -201,7 +184,6 @@
     <string name="report_income_source">收入来源</string>
     <string name="report_expense_dist">支出分布</string>
     <string name="report_dist_hint">点击分类查看二级分类与交易明细</string>
-    <string name="report_detail_title">%s · 明细</string>
     <string name="count_label">记账笔数</string>
 
     <!-- ===== 一级类下钻页 ===== -->

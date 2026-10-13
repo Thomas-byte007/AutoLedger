@@ -103,6 +103,37 @@ class PaymentParserTest {
         assertEquals(Direction.INCOME, p.direction)
     }
 
+    // ------------------------------------------------ 凌晨的「被动进账」播报
+
+    @Test
+    fun `余额宝昨日收益不记账`() {
+        // 理财收益每天凌晨发放，支付宝会推一条「昨日收益已到账」。
+        // 它带金额、又写着「到账 / 已存入」，以前会被记成一条没有交易对方的收入。
+        val text = "支付宝 余额宝昨日收益 1.23元 已存入余额宝"
+        assertNull(PaymentParser.parseNotification(alipay, text))
+        assertEquals("理财收益 / 利息类播报，不属于日常收支", PaymentParser.skipReason(alipay, text))
+    }
+
+    @Test
+    fun `零钱通收益与利息到账都不记账`() {
+        assertNull(PaymentParser.parseNotification(wechat, "微信支付 零钱通昨日收益已到账 0.55元"))
+        assertNull(PaymentParser.parseNotification(alipay, "支付宝 结息 3.20元 已入账"))
+        assertNull(PaymentParser.parseNotification(alipay, "支付宝 基金分红 12.00元 已到账"))
+    }
+
+    @Test
+    fun `理财过滤不能误伤正常付款`() {
+        // 「余额宝 / 零钱通」是合法的扣款渠道，不能被当成理财播报一起丢掉
+        val viaYuE = PaymentParser.parseNotification(alipay, "支付宝 在 肯德基 消费 45.00元 余额宝")!!
+        assertEquals(4500L, viaYuE.amountCents)
+        assertEquals("余额宝", viaYuE.payMethod)
+
+        val viaLingQianTong =
+            PaymentParser.parseNotification(wechat, "微信支付 已支付¥25.00 支付方式：零钱通")!!
+        assertEquals(2500L, viaLingQianTong.amountCents)
+        assertEquals("零钱通", viaLingQianTong.payMethod)
+    }
+
     // ------------------------------------------------------------ 宁可漏不可错
 
     @Test

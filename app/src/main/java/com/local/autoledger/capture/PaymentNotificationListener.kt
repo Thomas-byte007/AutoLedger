@@ -83,8 +83,15 @@ class PaymentNotificationListener : NotificationListenerService() {
 
                 val parsed = PaymentParser.parseNotification(pkg, combined)
                 if (parsed == null) {
-                    // 原文照记一份，真机上「为什么这笔记不上」全指望这一行
-                    CaptureLog.add("未识别", "$label｜${CaptureLog.brief(combined)}")
+                    // 原文照记一份，真机上「为什么这笔记不上」全指望这一行。
+                    // 「本来就不该记的」（理财收益播报之类）单独标成「跳过」——
+                    // 混进「未识别」里，排查时会白白去翻文案覆盖。
+                    val why = PaymentParser.skipReason(pkg, combined)
+                    if (why != null) {
+                        CaptureLog.add("跳过", "$label｜$why｜${CaptureLog.brief(combined)}")
+                    } else {
+                        CaptureLog.add("未识别", "$label｜${CaptureLog.brief(combined)}")
+                    }
                     return@execute
                 }
                 CaptureSink.store(applicationContext, parsed, occurredAt)

@@ -66,6 +66,12 @@
 > 判重是分档做的，不会把「连着付了好几笔同样金额」误当成一笔：
 > 同一条通知在 20 秒内被系统反复投递才算重复，不同来源（通知 / 账单）之间给了 4 分钟窗口。
 > 支付成功页这条链路不抢记：它比通知晚 8 秒出场，先确认最近没有同额记录才落库。
+>
+> 支付宝「**碰一下**」的支付成功页上，金额是动画画上去的：窗口刚出现那一帧页面上还没有金额。
+> 这条链路会在 0.35 / 0.9 / 1.8 秒各回看一次，等金额渲染出来再记，所以碰一下同样不会漏。
+>
+> **余额宝 / 零钱通的收益播报**（每天凌晨发放）不会被记成收入 —— 它带金额、也写着「到账」，
+> 但既不是消费也不是真实进账，更没有交易对方。这类通知会在采集日志里留一条「跳过」并写明原因。
 
 ### 让它更稳：通知监听会「静默掉线」
 
@@ -98,7 +104,7 @@ App 现在自己处理这件事：
 |---|---|
 | `记账` | 已经记进账本 |
 | `未识别` | 收到了通知，但没解析出金额 / 收支方向，跟着的原文就是判断依据 |
-| `跳过` | 解析出来了，但被判重丢掉，原因写在日志里 |
+| `跳过` | 本就不该记的（理财收益播报、营销提醒），或解析出来了但被判重丢掉，原因写在日志里 |
 | `状态` | 通知使用权连接 / 断开（断开时不会自动记账） |
 | `删除` / `导入` | 手动删除、账单导入的执行结果 |
 
@@ -317,7 +323,7 @@ LEDGER_KEY_PASSWORD=你的_key_口令
 | 项 | 值 |
 |---|---|
 | 包名 | `com.local.autoledger` |
-| versionName / versionCode | 1.5.2 / 11 |
+| versionName / versionCode | 1.6.1 / 14 |
 | minSdk / targetSdk | 26 / 35 |
 | 签名 | APK Signature Scheme v2，CN=AutoLedger |
 | 权限 | POST_NOTIFICATIONS、FOREGROUND_SERVICE、FOREGROUND_SERVICE_DATA_SYNC、FOREGROUND_SERVICE_SPECIAL_USE、SCHEDULE_EXACT_ALARM、RECEIVE_BOOT_COMPLETED、REQUEST_IGNORE_BATTERY_OPTIMIZATIONS、READ_EXTERNAL_STORAGE(≤32) |
@@ -359,13 +365,13 @@ cd D:\Project\AutoLedger
 .\gradlew.bat :app:testDebugUnitTest
 ```
 
-**110 个用例**，覆盖金额格式化、通知 / 支付页解析、关键词分类、两级分类字典、分类改名 / 删除 / 恢复、年度汇总、三档判重与墓碑、链路活性判定（通知监听 + 无障碍）、无障碍引导弹窗（其中需要数据库与设备环境的用例用 Robolectric 跑）：
+**115 个用例**，覆盖金额格式化、通知 / 支付页解析、关键词分类、两级分类字典、分类改名 / 删除 / 恢复、年度汇总、三档判重与墓碑、链路活性判定（通知监听 + 无障碍）、无障碍引导弹窗（其中需要数据库与设备环境的用例用 Robolectric 跑）：
 
 | 文件 | 覆盖 |
 |---|---|
 | `MoneyTest` | 金额解析、千分位格式化 |
-| `PaymentParserTest` | 支付通知解析、噪声过滤、商户抽取 |
-| `ScreenCaptureTest` | 支付成功页文本解析（金额 / 商户 / 收支方向） |
+| `PaymentParserTest` | 支付通知解析、噪声过滤、商户抽取、「碰一下」与理财收益播报的分流 |
+| `ScreenCaptureTest` | 支付成功页文本解析（金额 / 商户 / 收支方向）、碰一下金额晚渲染的重扫判定 |
 | `NotifyLinkTest` | 通知监听链路活性判定 |
 | `AccessWatchdogTest` | 无障碍链路活性判定（授权在 / 服务没跑要分开说） |
 | `AccessibilityPromptTest` | 无障碍引导弹窗的触发条件 |
